@@ -1,0 +1,56 @@
+{
+  "location" : {
+    "value" :"westeurope"
+  },
+  "adminUsername": {
+    "value": "admin123"
+  },
+  "adminPassword": {
+    "value" : "Admin123_!"
+  },
+  "sqlServerServiceAccountUserName":{
+    "value": "sqlservice"
+  },
+  "sqlServerServiceAccountPassword":{
+    "value" : "We234kj@98"
+  },
+  "sharePointSetupUserAccountUserName":{
+    "value": "spsetup"
+  },
+  "sharePointSetupUserAccountPassword":{
+    "value" : "Adm1np@ss!34"
+  },
+  "sharePointFarmAccountPassword":{
+    "value": "Admin123sp!farm"
+  },
+  "sharePointFarmPassphrasePassword":{
+    "value": "P@ssw0rd!23"
+  },
+  "spWebIPRGName" : {
+    "value" : ""
+  },
+  "spWebIPAddressName" : {
+    "value" : "spWebIp"
+  },
+  "spWebIPNewOrExisting": {
+    "value" : "new"
+  },
+  "dnsPrefix": {
+    "value" : "spha1747"
+  },
+  "spCADNSPrefix": {
+    "value" : "sphaadmin1747"
+  },
+  "storageAccountNamePrefix": {
+    "value": "spha1747"
+  },
+  "spCAIPAddressName" : {
+    "value" : "spCAIP"
+  },
+  "spCAIPNewOrExisting": {
+    "value" : "new"
+  },
+  "spCARGName" : {
+    "value" : ""
+  }
+}
