@@ -1,0 +1,20 @@
+{
+    "location" : {
+      "value" : "westus"
+    },
+    "newStorageAccountName": {
+      "value":"storage123"
+    },
+    "adminUsername": {
+      "value" :"admin123"
+    },
+    "adminPassword": {
+      "value" :"Admin123_!"
+    },
+    "dnsNameForPublicIP": {
+      "value" : "dns123"
+    },
+    "windowsOSVersion": {
+      "value": "2012-R2-Datacenter"
+    }
+}
