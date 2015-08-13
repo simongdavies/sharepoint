@@ -309,7 +309,7 @@
 			"metadata": {
 				"artifactsBaseUrl": ""
 			},
-			"defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/sharepoint-server-farm-ha"
+			"defaultValue": "https://raw.githubusercontent.com/kenazk/sharepoint/master"
 		}
 	},
 	"variables": {
@@ -1442,9 +1442,9 @@
 				"EnableDnsClientLogging"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell.Test",
+				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.2",
+				"typeHandlerVersion": "2.1",
 				"settings": {
 					"modulesURL": "[variables('configuration').fswModulesURL]",
 					"configurationFunction": "[variables('configuration').fswConfigurationFunction]",
