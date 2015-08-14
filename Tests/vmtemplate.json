@@ -58,7 +58,8 @@
         "vmSize": "Standard_D2",
         "virtualNetworkName": "MyVNET",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-        "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]"
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+        "script" : "enablednslogs.ps1"
     },
     "resources": [
         {
@@ -170,24 +171,30 @@
                         }
                     ]
                 }
-            }
-        },
-        {
-          "type": "Microsoft.Compute/virtualMachines/extensions",
-          "name": "[concat(variables('vmName'),'/EnableDnsClientLogging')]",
-          "location": "[parameters('location')]",
-          "apiVersion": "2015-05-01-preview",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
-          ],
-          "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.4",
-            "settings": {
-              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -Command {$dnslogName = 'Microsoft-Windows-DNS-Client/Operational'; $dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration $dnslogName; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled >> D:\\isEnabled.txt;  Get-WinEvent -LogName Microsoft-Windows-DNS-Client/Operational | where { $_.ID -gt 1010 } >> D:\\dnsClientlog.txt }"
-            }
-          }
+            },
+            "resources" :
+            [
+              {
+                "type": "Microsoft.Compute/virtualMachines/extensions",
+                "name": "[concat(variables('vmName'),'/EnableDnsClientLogging')]",
+                "location": "[parameters('location')]",
+                "apiVersion": "2015-05-01-preview",
+                "dependsOn": [
+                  "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                ],
+                "properties": {
+                  "publisher": "Microsoft.Compute",
+                  "type": "CustomScriptExtension",
+                  "typeHandlerVersion": "1.4",
+                  "settings": {
+                    "fileuris" : [
+                      "https://raw.githubusercontent.com/kenazk/sharepoint/master/Tools/enablednslogs.ps1"
+                    ],
+                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -file enablednslogs.ps1"
+                  }
+                }
+              }
+            ]
         }
     ]
 }

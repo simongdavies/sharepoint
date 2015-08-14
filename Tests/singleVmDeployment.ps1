@@ -5,7 +5,7 @@ $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\tests\vmtemplate.json
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\tests\vmtemplate-parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "T4"
+$rgprefix = "T5"
 
 # Generate parameter object
 $hash = @{};
