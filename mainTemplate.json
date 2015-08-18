@@ -1037,6 +1037,23 @@
 			"resources" :[
 				{
 					"type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmSettings').adPDCVMName,'/EnableDnsClientLogging')]",
+          "location": "[parameters('location')]",
+          "apiVersion": "2015-05-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adPDCVMName)]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.4",
+            "settings": {
+              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+            }
+          }
+        },
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
 					"name": "[concat(variables('vmSettings').adPDCVMName,'/InstallDomainController')]",
 					"apiVersion": "2015-05-01-preview",
 					"location": "[parameters('location')]",
@@ -1046,7 +1063,7 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "1.7",
+						"typeHandlerVersion": "2.1",
 						"settings": {
 							"modulesURL": "[variables('configuration').adPDCModulesURL]",
 							"configurationFunction": "[variables('configuration').adPDCConfigurationFunction]",
@@ -1147,37 +1164,56 @@
 						}
 					]
 				}
-			}
-		},
-		{
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(variables('vmSettings').adBDCVMName,'/CreateBDC')]",
-			"apiVersion": "2015-05-01-preview",
-			"location": "[parameters('location')]",
-			"dependsOn":[
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName)]"
-			],
-			"properties": {
-				"publisher": "Microsoft.Powershell",
-				"type": "DSC",
-				"typeHandlerVersion": "2.1",
-				"settings": {
-					"modulesURL": "[variables('configuration').adBDCModulesURL]",
-					"configurationFunction": "[variables('configuration').adBDCConfigurationFunction]",
+			},
+			"resources" : [
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').adBDCVMName,'/EnableDnsClientLogging')]",
+					"location": "[parameters('location')]",
+					"apiVersion": "2015-05-01-preview",
+					"dependsOn": [
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName)]"
+					],
 					"properties": {
-						"domainName": "[parameters('domainName')]",
-						"adminCreds":{
-							"userName": "[parameters('adminUserName')]",
-							"password": "privateSettingsRef:adminPassword"
+						"publisher": "Microsoft.Compute",
+						"type": "CustomScriptExtension",
+						"typeHandlerVersion": "1.4",
+						"settings": {
+							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
 						}
 					}
 				},
-				"protectedSettings": {
-					"items": {
-						"adminPassword": "[parameters('adminPassword')]"
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').adBDCVMName,'/CreateBDC')]",
+					"apiVersion": "2015-05-01-preview",
+					"location": "[parameters('location')]",
+					"dependsOn":[
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName)]"
+					],
+					"properties": {
+						"publisher": "Microsoft.Powershell",
+						"type": "DSC",
+						"typeHandlerVersion": "2.1",
+						"settings": {
+							"modulesURL": "[variables('configuration').adBDCModulesURL]",
+							"configurationFunction": "[variables('configuration').adBDCConfigurationFunction]",
+							"properties": {
+								"domainName": "[parameters('domainName')]",
+								"adminCreds":{
+									"userName": "[parameters('adminUserName')]",
+									"password": "privateSettingsRef:adminPassword"
+								}
+							}
+						},
+						"protectedSettings": {
+							"items": {
+								"adminPassword": "[parameters('adminPassword')]"
+							}
+						}
 					}
 				}
-			}
+			]
 		},
 		{
 			"apiVersion": "2015-05-01-preview",
@@ -1251,7 +1287,26 @@
 						}
 					]
 				}
-			}
+			},
+			"resources" : [
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').sqlVMName, copyindex(),'/EnableDnsClientLogging')]",
+					"location": "[parameters('location')]",
+					"apiVersion": "2015-05-01-preview",
+					"dependsOn": [
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlVMName, copyindex())]"
+					],
+					"properties": {
+						"publisher": "Microsoft.Compute",
+						"type": "CustomScriptExtension",
+						"typeHandlerVersion": "1.4",
+						"settings": {
+							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+						}
+					}
+				}
+			]
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1266,7 +1321,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "1.7",
+				"typeHandlerVersion": "2.1",
 				"settings": {
 					"modulesURL": "[variables('configuration').sqlAOPrepareModulesURL]",
 					"configurationFunction": "[variables('configuration').sqlAOPrepareConfigurationFunction]",
@@ -1424,12 +1479,11 @@
             "type": "CustomScriptExtension",
             "typeHandlerVersion": "1.4",
             "settings": {
-              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -Command {$dnslogName = 'Microsoft-Windows-DNS-Client/Operational'; $dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration $dnslogName; $dnslog.IsEnabled=$true; $dnslog.SaveChanges()}"
+              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
             }
           }
         }
       ]
-
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1642,7 +1696,26 @@
 						}
 					]
 				}
-			}
+			},
+			"resources" : [
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').spappVMName, copyindex(),'/EnableDnsClientLogging')]",
+					"location": "[parameters('location')]",
+					"apiVersion": "2015-05-01-preview",
+					"dependsOn": [
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName, copyindex())]"
+					],
+					"properties": {
+						"publisher": "Microsoft.Compute",
+						"type": "CustomScriptExtension",
+						"typeHandlerVersion": "1.4",
+						"settings": {
+							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+						}
+					}
+				}
+			]
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1656,7 +1729,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "1.7",
+				"typeHandlerVersion": "2.1",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1715,7 +1788,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "1.7",
+				"typeHandlerVersion": "2.1",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1824,7 +1897,26 @@
 						}
 					]
 				}
-			}
+			},
+			"resources" : [
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').spwebVMName, copyindex(),'/EnableDnsClientLogging')]",
+					"location": "[parameters('location')]",
+					"apiVersion": "2015-05-01-preview",
+					"dependsOn": [
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName, copyindex())]"
+					],
+					"properties": {
+						"publisher": "Microsoft.Compute",
+						"type": "CustomScriptExtension",
+						"typeHandlerVersion": "1.4",
+						"settings": {
+							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+						}
+					}
+				}
+			]
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1838,7 +1930,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "1.7",
+				"typeHandlerVersion": "2.1",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1897,7 +1989,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "1.7",
+				"typeHandlerVersion": "2.1",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",

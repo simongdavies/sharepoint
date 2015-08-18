@@ -4,8 +4,8 @@ $count = 1
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\tests\vmtemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\tests\vmtemplate-parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "westus"
-$rgprefix = "T5"
+$location = "westeurope"
+$rgprefix = "DnsClientTest"
 
 # Generate parameter object
 $hash = @{};

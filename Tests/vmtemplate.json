@@ -187,10 +187,7 @@
                   "type": "CustomScriptExtension",
                   "typeHandlerVersion": "1.4",
                   "settings": {
-                    "fileuris" : [
-                      "https://raw.githubusercontent.com/kenazk/sharepoint/master/Tools/enablednslogs.ps1"
-                    ],
-                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -file enablednslogs.ps1"
+                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
                   }
                 }
               }
