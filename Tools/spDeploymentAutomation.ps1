@@ -4,11 +4,11 @@
 $count = 4
 
 # Variables
-$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"
+$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-serialized.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "southeastasia"
-$rgprefix = "T6"
+$rgprefix = "T8"
 
 # Generate parameter object
 $hash = @{};

@@ -1058,7 +1058,8 @@
 					"apiVersion": "2015-05-01-preview",
 					"location": "[parameters('location')]",
 					"dependsOn":[
-						"[resourceId('Microsoft.Compute/virtualMachines', variables('vmSettings').adPDCVMName)]"
+						"[resourceId('Microsoft.Compute/virtualMachines', variables('vmSettings').adPDCVMName)]",
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adPDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
 						"publisher": "Microsoft.Powershell",
@@ -1189,7 +1190,8 @@
 					"apiVersion": "2015-05-01-preview",
 					"location": "[parameters('location')]",
 					"dependsOn":[
-						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName)]"
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName)]",
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
 						"publisher": "Microsoft.Powershell",
@@ -1492,6 +1494,7 @@
 			"location": "[parameters('location')]",
 			"dependsOn":[
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName)]",
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName,'/extensions/EnableDnsClientLogging')]",
 				"Microsoft.Resources/deployments/UpdateSQLWNic"
 			],
 			"properties": {
@@ -1723,6 +1726,7 @@
 			"location": "[parameters('location')]",
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0')]",
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0','/extensions/EnableDnsClientLogging')]",
 				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').sqlVMName,'1/extensions/CreateCluster')]"
 				],
 			"properties": {
@@ -1782,6 +1786,7 @@
 			"location": "[parameters('location')]",
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1')]",
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1','/extensions/EnableDnsClientLogging')]",
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
@@ -1924,6 +1929,7 @@
 			"location": "[parameters('location')]",
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName,'0')]",
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName,'0/extensions/EnableDnsClientLogging')]",
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
