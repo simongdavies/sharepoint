@@ -1,7 +1,7 @@
 ﻿switch-azuremode -name AzureResourceManager
 
-$location = "west*"
-$rgPrefix = "t5*"
+$location = "*"
+$rgPrefix = "t6*"
 
 $sb = {
         param($rgname)
