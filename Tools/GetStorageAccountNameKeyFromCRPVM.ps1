@@ -1,9 +1,9 @@
 ﻿switch-azuremode -name AzureResourceManager
 
 
-$rgname = "HA-2015811-12579"
+$rgname = "ADPDC-2015820-16572"
 
-$vmname = "sql-w"
+$vmname = "ad-pdc"
 
 
 

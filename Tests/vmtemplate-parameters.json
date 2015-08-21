@@ -13,8 +13,5 @@
     },
     "dnsNameForPublicIP": {
       "value" : "dns123"
-    },
-    "windowsOSVersion": {
-      "value": "2012-R2-Datacenter"
     }
 }

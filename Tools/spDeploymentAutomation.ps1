@@ -1,14 +1,14 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 
 # Count of runs
-$count = 4
+$count = 3
 
 # Variables
-$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-serialized.json"
+$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\Tests\ADPDConly.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "southeastasia"
-$rgprefix = "T8"
+$location = "westeurope"
+$rgprefix = "T17"
 
 # Generate parameter object
 $hash = @{};
@@ -44,6 +44,8 @@ for($i = 0; $i -lt $count; $i++)
         createSharepointDeployment $rgname $templateFile $hash
     }
     $job = start-job -Name $jobName -ScriptBlock $sb -ArgumentList $rgname, $templateFile, $hash
+
+    Start-sleep -s 2
 }
 
 

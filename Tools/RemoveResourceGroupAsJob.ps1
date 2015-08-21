@@ -1,7 +1,7 @@
 ﻿switch-azuremode -name AzureResourceManager
 
 $location = "*"
-$rgPrefix = "DnsClient*"
+$rgPrefix = "T13*"
 
 $sb = {
         param($rgname)

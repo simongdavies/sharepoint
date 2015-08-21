@@ -1,11 +1,11 @@
 ﻿switch-azuremode -name AzureResourceManager
 
-$count = 1
+$count = 4
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\tests\vmtemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\tests\vmtemplate-parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "westeurope"
-$rgprefix = "DnsClientTest"
+$location = "westus"
+$rgprefix = "singleVM"
 
 # Generate parameter object
 $hash = @{};
