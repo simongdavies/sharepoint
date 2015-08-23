@@ -52,5 +52,20 @@
   },
   "spCARGName" : {
     "value" : ""
+  },
+  "storageAccountType": {
+    "value" : "Standard_LRS"
+  },
+  "adVMSize" : {
+    "value" : "Standard_D1"
+  },
+  "sqlVMSize" : {
+    "value" : "Standard_D3"
+  },
+  "witnessVMSize" : {
+    "value" : "Standard_D1"
+  },
+  "spVMSize" : {
+    "value" : "Standard_D3"
   }
 }

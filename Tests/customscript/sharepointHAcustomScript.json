@@ -1094,7 +1094,11 @@
             "type": "CustomScriptExtension",
             "typeHandlerVersion": "1.4",
             "settings": {
-              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; Start-Sleep -s 30;"
+							"fileUris": [
+	              "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/Common.ps1",
+	              "https://azuregalleryassetsch.blob.core.windows.net/microsoft-sharepoint-sql-0-3-0-preview/CreateADPrimaryDomainController.ps1"
+	            ],
+              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -Command .\\CreateADPrimaryDomainController.ps1 -DomainName [parameters('domainName')] -DomainNetBiosName [variables('vmSettings').adPDCVMName] -UserName [parameters('adminUserName')] -Password [parameters('adminPassword')] -EncryptionCertificateThumbprint \"{encryptionCertificateThumbprint}\""
             }
           }
 				},

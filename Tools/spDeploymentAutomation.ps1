@@ -1,14 +1,18 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 
 # Count of runs
-$count = 3
+$count = 5
 
 # Variables
-$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\Tests\ADPDConly.json"
+$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-serialized.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "westeurope"
-$rgprefix = "T17"
+$location = "eastus"
+$rgprefix = "T20"
+$storageType = "Standard_LRS"
+$sql = "Standard_D3"
+$ad = "Standard_D1"
+$sp = "Standard_D3"
 
 # Generate parameter object
 $hash = @{};
@@ -31,6 +35,11 @@ for($i = 0; $i -lt $count; $i++)
     $hash.spCADNSPrefix = "spha" + $dsuffix + "ca"
     $hash.storageAccountNamePrefix = "sa" + $dsuffix
     $hash.location = $location
+    $hash.StorageAccountType = $storageType
+    $hash.witnessVMSize = "Standard_D1"
+    $hash.spVMSize = $sp
+    $hash.sqlVMSize = $sql
+    $hash.adVMSize = $ad
 
     # Run as asynchronous job
     $jobName = "spDeployment-" + $i;
@@ -45,7 +54,7 @@ for($i = 0; $i -lt $count; $i++)
     }
     $job = start-job -Name $jobName -ScriptBlock $sb -ArgumentList $rgname, $templateFile, $hash
 
-    Start-sleep -s 2
+    Start-sleep -s 5
 }
 
 
