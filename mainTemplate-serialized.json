@@ -455,7 +455,9 @@
 			"spWebIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spWebIPNewOrExisting'),'.json')]",
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]"
 		},
-		"assetLocation": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/sharepoint-server-farm-ha"
+		"assetLocation": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/sharepoint-server-farm-ha",
+		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; New-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\' -Name 'DisabledComponents' -Value '0xffffffff' -PropertyType 'DWord'; Restart-Computer -force;\"",
+		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt;\""
 	},
 	"resources": [
 		{
@@ -1048,7 +1050,7 @@
             "type": "CustomScriptExtension",
             "typeHandlerVersion": "1.4",
             "settings": {
-              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt;"
+              "commandToExecute": "[variables('adCommands')]"
             }
           }
         },
@@ -1180,7 +1182,7 @@
 						"type": "CustomScriptExtension",
 						"typeHandlerVersion": "1.4",
 						"settings": {
-							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt;"
+							"commandToExecute": "[variables('adCommands')]"
 						}
 					}
 				},
@@ -1304,7 +1306,7 @@
 						"type": "CustomScriptExtension",
 						"typeHandlerVersion": "1.4",
 						"settings": {
-							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+								"commandToExecute": "[variables('commands')]"
 						}
 					}
 				}
@@ -1481,7 +1483,7 @@
             "type": "CustomScriptExtension",
             "typeHandlerVersion": "1.4",
             "settings": {
-              "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+              "commandToExecute": "[variables('commands')]"
             }
           }
         }
@@ -1594,7 +1596,8 @@
 				"count": "[variables('vmSettings').noOfSqlVMs]"
 			},
 			"dependsOn": [
-				"Microsoft.Resources/deployments/UpdateVNetDNS2"
+				"Microsoft.Resources/deployments/UpdateVNetDNS2",
+				"Microsoft.Resources/deployments/UpdateSQLWNic"
 			],
 			"properties": {
 				"mode": "Incremental",
@@ -1713,7 +1716,7 @@
 						"type": "CustomScriptExtension",
 						"typeHandlerVersion": "1.4",
 						"settings": {
-							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+							"commandToExecute": "[variables('commands')]"
 						}
 					}
 				}
@@ -1916,7 +1919,7 @@
 						"type": "CustomScriptExtension",
 						"typeHandlerVersion": "1.4",
 						"settings": {
-							"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File D:\\isEnabled.txt;"
+							"commandToExecute": "[variables('commands')]"
 						}
 					}
 				}

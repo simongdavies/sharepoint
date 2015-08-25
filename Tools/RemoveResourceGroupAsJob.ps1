@@ -1,7 +1,7 @@
 ﻿switch-azuremode -name AzureResourceManager
 
-$location = "eastus"
-$rgPrefix = "T20*"
+$location = "*"
+$rgPrefix = "T22*"
 
 $sb = {
         param($rgname)

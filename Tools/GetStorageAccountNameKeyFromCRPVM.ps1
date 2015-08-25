@@ -1,7 +1,7 @@
 ﻿switch-azuremode -name AzureResourceManager
 
 
-$rgname = "ADPDC-2015820-16572"
+$rgname = "T20-2015822-165743"
 
 $vmname = "ad-pdc"
 

@@ -1,18 +1,15 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 
 # Count of runs
-$count = 5
+$count = 9
 
 # Variables
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-serialized.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "eastus"
-$rgprefix = "T20"
-$storageType = "Standard_LRS"
-$sql = "Standard_D3"
-$ad = "Standard_D1"
-$sp = "Standard_D3"
+$location = "westus"
+$rgprefix = "T22s"
+$premium = $true
 
 # Generate parameter object
 $hash = @{};
@@ -35,11 +32,23 @@ for($i = 0; $i -lt $count; $i++)
     $hash.spCADNSPrefix = "spha" + $dsuffix + "ca"
     $hash.storageAccountNamePrefix = "sa" + $dsuffix
     $hash.location = $location
-    $hash.StorageAccountType = $storageType
-    $hash.witnessVMSize = "Standard_D1"
-    $hash.spVMSize = $sp
-    $hash.sqlVMSize = $sql
-    $hash.adVMSize = $ad
+
+    if ($premium)
+    {
+        $hash.StorageAccountType = "Premium_LRS"
+        $hash.witnessVMSize = "Standard_DS1"
+        $hash.spVMSize = "Standard_DS3"
+        $hash.sqlVMSize = "Standard_DS3"
+        $hash.adVMSize = "Standard_DS1"
+    } 
+    else
+    {
+        $hash.StorageAccountType = "Standard_LRS"
+        $hash.witnessVMSize = "Standard_D1"
+        $hash.spVMSize = "Standard_D3"
+        $hash.sqlVMSize = "Standard_D3"
+        $hash.adVMSize = "Standard_D1"
+    }
 
     # Run as asynchronous job
     $jobName = "spDeployment-" + $i;
