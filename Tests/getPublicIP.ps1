@@ -1,6 +1,6 @@
 ﻿switch-azuremode -name AzureResourceManager
 
-$resourceGroupName = "T22s-2015824-184734"
+$resourceGroupName = "T22s-2015824-184758"
 
 $resourceType = "Microsoft.Network/publicIpaddresses" 
 $apiversion = "2015-05-01-preview"

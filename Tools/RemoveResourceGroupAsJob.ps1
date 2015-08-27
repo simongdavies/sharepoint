@@ -1,7 +1,9 @@
 ﻿switch-azuremode -name AzureResourceManager
 
 $location = "*"
-$rgPrefix = "T20*"
+$rgPrefix = "T23*"
+
+$c = get-content C:\daily\2015-08-25\dnsRgs.txt
 
 $sb = {
         param($rgname)
@@ -12,7 +14,7 @@ $sb = {
         deleteSharepointDeployments $rgname
     }
 
-$rg = Get-AzureResourceGroup | where {$_.Location -like $location } | where {$_.ResourceGroupName -like $rgPrefix } | where {$_.ResourceGroupName -notlike "T22s-2015824-161549"}
+$rg = Get-AzureResourceGroup | where {$_.Location -like $location } | where {$_.ResourceGroupName -like $rgPrefix } | where {$c -notcontains $_.ResourceGroupName}
 foreach($g in $rg)
 {
     Start-job -Name "job" -ScriptBlock $sb -ArgumentList $g.ResourceGroupName
