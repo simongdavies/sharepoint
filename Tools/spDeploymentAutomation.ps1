@@ -7,8 +7,8 @@ $count = 5
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-serialized.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "westus"
-$rgprefix = "T25p"
+$location = "westeurope"
+$rgprefix = "T26p"
 $premium = $true
 
 # Generate parameter object
