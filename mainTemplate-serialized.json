@@ -455,7 +455,7 @@
 			"spWebIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spWebIPNewOrExisting'),'.json')]",
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]"
 		},
-		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1/",
+		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/",
 		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; nslookup download.microsoft.com. | out-file C:\\download.txt; nslookup sphafarm.com. | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; New-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\' -Name 'DisabledComponents' -Value '0xffffffff' -PropertyType 'DWord'; Restart-Computer -force;\"",
 		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; nslookup download.microsoft.com. | out-file C:\\download.txt; nslookup sphafarm.com. | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt;\""
 	},
@@ -1066,7 +1066,7 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "2.1",
+						"typeHandlerVersion": "1.7",
 						"settings": {
 							"modulesURL": "[variables('configuration').adPDCModulesURL]",
 							"configurationFunction": "[variables('configuration').adPDCConfigurationFunction]",
@@ -1198,7 +1198,7 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "2.1",
+						"typeHandlerVersion": "1.7",
 						"settings": {
 							"modulesURL": "[variables('configuration').adBDCModulesURL]",
 							"configurationFunction": "[variables('configuration').adBDCConfigurationFunction]",
