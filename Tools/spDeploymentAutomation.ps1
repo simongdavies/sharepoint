@@ -8,7 +8,7 @@ $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\dsc2.1\mainTemplate-s
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "T34p"
+$rgprefix = "T36p"
 $premium = $true
 
 # Generate parameter object

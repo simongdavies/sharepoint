@@ -133,7 +133,7 @@
 			"metadata": {
 				"description": "The FQDN of the AD Domain created "
 			},
-			"defaultValue":"sphafarm.com"
+			"defaultValue":"sphafarm.local"
 		},
 		"sqlServerServiceAccountUserName":{
 			"type":"string",
