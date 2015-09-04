@@ -456,8 +456,8 @@
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1",
-		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; nslookup download.microsoft.com. | out-file C:\\download.txt; nslookup sphafarm.com. | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; New-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\' -Name 'DisabledComponents' -Value '0xffffffff' -PropertyType 'DWord'; Restart-Computer -force;\"",
-		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; nslookup download.microsoft.com. | out-file C:\\download.txt; nslookup sphafarm.com. | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt;\""
+		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; Resolve-DnsName download.microsoft.com -QuickTimeout | out-file C:\\download.txt; Resolve-DnsName sphafarm.com -QuickTimeout | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; New-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\' -Name 'DisabledComponents' -Value '0xffffffff' -PropertyType 'DWord'; Restart-Computer -force;\"",
+		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; Resolve-DnsName download.microsoft.com -QuickTimeout | out-file C:\\download.txt; Resolve-DnsName sphafarm.com -QuickTimeout | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; Start-Sleep -s 180\""
 	},
 	"resources": [
 		{
@@ -1064,7 +1064,7 @@
 						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adPDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
-						"publisher": "Microsoft.Powershell",
+						"publisher": "Microsoft.Powershell.Test",
 						"type": "DSC",
 						"typeHandlerVersion": "2.4",
 						"settings": {
@@ -1196,7 +1196,7 @@
 						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
-						"publisher": "Microsoft.Powershell",
+						"publisher": "Microsoft.Powershell.Test",
 						"type": "DSC",
 						"typeHandlerVersion": "2.4",
 						"settings": {
@@ -1323,7 +1323,7 @@
 				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'0-nic')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1366,7 +1366,7 @@
 				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'1-nic')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1500,7 +1500,7 @@
 				"Microsoft.Resources/deployments/UpdateSQLWNic"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1733,7 +1733,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').sqlVMName,'1/extensions/CreateCluster')]"
 				],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1793,7 +1793,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1936,7 +1936,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1995,7 +1995,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').spwebVMName,'0/extensions/ConfigureSPWebServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {

@@ -388,13 +388,9 @@
             "spDiskSize": 128
         },
         "virtualNetworkName": "spfarmhaVNET",
-
-
         "VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "staticSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('subnetNames').staticSubnetName)]",
         "ADTemplateURL": "[concat(parameters('assetLocation'),'/ADVmTemplate.json')]",
-
-
         "ADStorageName": "[concat(parameters('newStorageAccountNamePrefix'),'adsa')]",
         "ADVmDepoyment": "DeployAdVms",
         "ADVmDepoymentId": "[concat('Microsoft.Resources/deployments/', variables('ADVmDepoyment'))]",
@@ -404,61 +400,48 @@
         "DeployPrimaryAdId": "[concat('Microsoft.Resources/deployments/', variables('DeployPrimaryAd'))]",
         "DeploySecondaryAdName": "DeploySecondaryAdName",
         "DeploySecondaryAdNameId": "[concat('Microsoft.Resources/deployments/', variables('DeploySecondaryAdName'))]",
-
         "sqlSubnetName": "sqlSubnet",
         "sqlSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('sqlSubnetName'))]",
         "sqlStorageName": "[concat(parameters('newStorageAccountNamePrefix'),'sqlsa')]",
         "SqlClusterTemplateURL": "[concat(parameters('assetLocation'),'/SqlClusterVmTemplate.json')]",
         "DeploySqlClusterVms": "DeploySqlClusterVms",
         "DeploySqlClusterVmsId": "[concat('Microsoft.Resources/deployments/', variables('DeploySqlClusterVms'))]",
-
         "SqlWitnessTemplateURL": "[concat(parameters('assetLocation'),'/SqlWitnessVmTemplate.json')]",
         "SqlWitnessStorageName": "[concat(parameters('newStorageAccountNamePrefix'),'sqlwsa')]",
         "DeploySqlWitnessVms": "DeploySqlWitnessVms",
         "DeploySqlWitnessVmsId": "[concat('Microsoft.Resources/deployments/', variables('DeploySqlWitnessVms'))]",
-
         "AdVmNamePrefix": "[concat(parameters('vmNamePrefix'),'-AD-')]",
         "adPDCVMName": "[concat(variables('AdVmNamePrefix'),'0')]",
         "adBDCVMName": "[concat(variables('AdVmNamePrefix'),'1')]",
         "vnetwithDNSTemplateUri": "[concat(parameters('assetLocation'),'/vnet-with-dns-server.json')]",
         "UpdateVNetDNS1": "UpdateVNetDNS1",
         "UpdateVNetDNS1Id": "[concat('Microsoft.Resources/deployments/', variables('UpdateVNetDNS1'))]",
-
         "UpdateVNetDNS2": "UpdateVNetDNS2",
         "UpdateVNetDNS2Id": "[concat('Microsoft.Resources/deployments/', variables('UpdateVNetDNS2'))]",
-
         "UpdateSQLWNic": "UpdateSQLWNic",
         "UpdateSQLWNicId": "[concat('Microsoft.Resources/deployments/', variables('UpdateSQLWNic'))]",
         "sqlwNicName": "SqlWitnessMachine-Nic-0",
         "nicTemplateURL": "[concat(parameters('assetLocation'),'/nic.json')]",
-
         "UpdateSQLCNic1": "UpdateSQLCNic1",
         "UpdateSQLCNic1Id": "[concat('Microsoft.Resources/deployments/', variables('UpdateSQLCNic1'))]",
         "sqlNicName1": "SqlMachine-Nic-0",
-
         "UpdateSQLCNic2": "UpdateSQLCNic2",
         "UpdateSQLCNic2Id": "[concat('Microsoft.Resources/deployments/', variables('UpdateSQLCNic2'))]",
         "sqlNicName2": "SqlMachine-Nic-1",
-
         "DeploySqlWitnessShare": "DeploySqlWitnessShare",
         "DeploySqlWitnessShareId": "[concat('Microsoft.Resources/deployments/', variables('DeploySqlWitnessShare'))]",
         "DeploySqlWitnessShareTemplateUrl": "[concat(parameters('assetLocation'),'/DeploySqlWitnessShare.json')]",
         "SQLWitnessSharePath": "[concat(parameters('dnsPrefix'),'-fsw')]",
         "SqlWitnessVmNamePrefix": "[concat(parameters('vmNamePrefix'),'-SqlW-')]",
         "sqlwVMName": "[concat(variables('SqlWitnessVmNamePrefix'),'0')]",
-
         "DeploySqlAlwaysOn": "DeploySqlAlwaysOn",
         "DeploySqlAlwaysOnTemplateUrl": "[concat(parameters('assetLocation'),'/DeploySqlAlwaysOn.json')]",
-
         "SqlClusterVmNamePrefix": "[concat(parameters('vmNamePrefix'),'-SqlC-')]",
         "sqlCVMName1": "[concat(variables('SqlClusterVmNamePrefix'),'0')]",
         "sqlCVMName2": "[concat(variables('SqlClusterVmNamePrefix'),'0')]",
-
-        "sqlAOEPName": "[concat(parameters('dnsPrefix'),'-hadr')]", 
-        "sqlAOAGName": "[concat(parameters('dnsPrefix'),'-ag')]", 
-        "sqlAOListenerName":"[concat(parameters('dnsPrefix'),'ag-listener')]" 
-
-
+        "sqlAOEPName": "[concat(parameters('dnsPrefix'),'-hadr')]",
+        "sqlAOAGName": "[concat(parameters('dnsPrefix'),'-ag')]",
+        "sqlAOListenerName":"[concat(parameters('dnsPrefix'),'ag-listener')]",
         "spWebSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('subnetNames').spWebSubnetName)]",
         "spAppSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('subnetNames').spAppSubnetName)]",
         "ids": {
@@ -893,9 +876,9 @@
                     "adminUsername": { "value": "[parameters('adminUsername')]" },
                     "adminPassword": { "value": "[parameters('adminPassword')]" },
                     "assetLocation": { "value": "[parameters('assetLocation')]" },
-                    "sqlAlwaysOnEndpointName": { "value": "[variables('sqlAOEPName')]" }, 
-                    "sqlAlwaysOnAvailabilityGroupName": { "value": "[variables('sqlAOAGName')]" }, 
-                    "sqlAlwaysOnAvailabilityGroupListenerName": { "value": "[variables('sqlAOListenerName')]" } 
+                    "sqlAlwaysOnEndpointName": { "value": "[variables('sqlAOEPName')]" },
+                    "sqlAlwaysOnAvailabilityGroupName": { "value": "[variables('sqlAOAGName')]" },
+                    "sqlAlwaysOnAvailabilityGroupListenerName": { "value": "[variables('sqlAOListenerName')]" }
                 }
             }
 
