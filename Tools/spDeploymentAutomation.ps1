@@ -7,8 +7,8 @@ $count = 3
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\dsc2.1\mainTemplate-serialized-dsc24.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "westeurope"
-$rgprefix = "T32p"
+$location = "westus"
+$rgprefix = "T33p"
 $premium = $true
 
 # Generate parameter object
