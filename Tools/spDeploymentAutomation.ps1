@@ -1,14 +1,14 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 
 # Count of runs
-$count = 3
+$count = 1
 
 # Variables
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\dsc2.1\mainTemplate-serialized-dsc24.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "T33p"
+$rgprefix = "T34p"
 $premium = $true
 
 # Generate parameter object
