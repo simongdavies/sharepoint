@@ -133,7 +133,7 @@
 			"metadata": {
 				"description": "The FQDN of the AD Domain created "
 			},
-			"defaultValue":"sphafarm.com"
+			"defaultValue":"sphafarm.local"
 		},
 		"sqlServerServiceAccountUserName":{
 			"type":"string",
@@ -455,9 +455,9 @@
 			"spWebIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spWebIPNewOrExisting'),'.json')]",
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]"
 		},
-		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/",
-		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; Resolve-DnsName download.microsoft.com -QuickTimeout | out-file C:\\download.txt; Resolve-DnsName sphafarm.com -QuickTimeout | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; New-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\' -Name 'DisabledComponents' -Value '0xffffffff' -PropertyType 'DWord'; Restart-Computer -force;\"",
-		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; Resolve-DnsName download.microsoft.com -QuickTimeout | out-file C:\\download.txt; Resolve-DnsName sphafarm.com -QuickTimeout | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; Start-Sleep -s 180\""
+		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1",
+		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; Resolve-DnsName download.microsoft.com -QuickTimeout | out-file C:\\download.txt; Resolve-DnsName sphafarm.local -QuickTimeout | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; New-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\' -Name 'DisabledComponents' -Value '0xffffffff' -PropertyType 'DWord'; Restart-Computer -force;\"",
+		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); ipconfig /flushdns; ipconfig /all | Out-File C:\\ipconfig.txt; Resolve-DnsName download.microsoft.com -QuickTimeout | out-file C:\\download.txt; Resolve-DnsName sphafarm.local -QuickTimeout | out-file C:\\sphafarm.txt; (Get-WinEvent -ListLog Microsoft-Windows-DNS-Client/Operational).IsEnabled | Out-File C:\\isEnabled.txt; Start-Sleep -s 180\""
 	},
 	"resources": [
 		{
@@ -830,17 +830,7 @@
 							"privateIPAddress" :"[parameters('adBDCNICIPAddress')]",
 							"subnet": {
 								"id": "[variables('staticSubnetRef')]"
-							},
-							"loadBalancerBackendAddressPools": [
-								{
-									"id":"[variables('derivedIds').adBEAddressPoolID]"
-								}
-							],
-							"loadBalancerInboundNatRules": [
-								{
-									"id": "[variables('derivedIds').adRDPNATRuleID]"
-								}
-							]
+							}
 						}
 					}
 				]
@@ -1335,7 +1325,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.1",
+				"typeHandlerVersion": "2.4",
 				"settings": {
 					"modulesURL": "[variables('configuration').sqlAOPrepareModulesURL]",
 					"configurationFunction": "[variables('configuration').sqlAOPrepareConfigurationFunction]",
@@ -1378,7 +1368,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.1",
+				"typeHandlerVersion": "2.4",
 				"settings": {
 					"modulesURL": "[variables('configuration').createClusterModulesURL]",
 					"configurationFunction": "[variables('configuration').createClusterConfigurationFunction]",
@@ -1512,7 +1502,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.1",
+				"typeHandlerVersion": "2.4",
 				"settings": {
 					"modulesURL": "[variables('configuration').fswModulesURL]",
 					"configurationFunction": "[variables('configuration').fswConfigurationFunction]",
@@ -1788,7 +1778,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.1",
+				"typeHandlerVersion": "2.4",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1848,7 +1838,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.1",
+				"typeHandlerVersion": "2.4",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1991,7 +1981,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.1",
+				"typeHandlerVersion": "2.4",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -2050,7 +2040,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.1",
+				"typeHandlerVersion": "2.4",
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
