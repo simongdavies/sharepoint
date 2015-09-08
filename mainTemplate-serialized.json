@@ -1323,7 +1323,7 @@
 				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'0-nic')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1366,7 +1366,7 @@
 				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'1-nic')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1500,7 +1500,7 @@
 				"Microsoft.Resources/deployments/UpdateSQLWNic"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1776,7 +1776,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').sqlVMName,'1/extensions/CreateCluster')]"
 				],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1836,7 +1836,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -1979,7 +1979,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
@@ -2038,7 +2038,7 @@
 				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').spwebVMName,'0/extensions/ConfigureSPWebServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
 				"settings": {
