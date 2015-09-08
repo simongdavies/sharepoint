@@ -7,9 +7,9 @@ $count = 2
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-nocustomscript.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "eastasia"
-$rgprefix = "T47s"
-$premium = $false
+$location = "southeastasia"
+$rgprefix = "T48p"
+$premium = $true
 
 # Generate parameter object
 $hash = @{};

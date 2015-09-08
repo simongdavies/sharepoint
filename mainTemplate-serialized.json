@@ -1064,7 +1064,7 @@
 						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adPDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
-						"publisher": "Microsoft.Powershell",
+						"publisher": "Microsoft.Powershell.Test",
 						"type": "DSC",
 						"typeHandlerVersion": "2.4",
 						"settings": {
@@ -1196,7 +1196,7 @@
 						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
-						"publisher": "Microsoft.Powershell",
+						"publisher": "Microsoft.Powershell.Test",
 						"type": "DSC",
 						"typeHandlerVersion": "2.4",
 						"settings": {
