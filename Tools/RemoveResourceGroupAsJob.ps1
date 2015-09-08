@@ -1,7 +1,7 @@
 ﻿switch-azuremode -name AzureResourceManager
 
-$location = "*"
-$rgPrefix = "T42p*"
+$location = "southeastasia"
+$rgPrefix = "*"
 
 $c = get-content C:\daily\2015-8-28\rgs.txt
 
@@ -14,7 +14,7 @@ $sb = {
         deleteSharepointDeployments $rgname
     }
 
-$rg = Get-AzureResourceGroup | where {$_.Location -like $location } | where {$_.ResourceGroupName -like $rgPrefix } | where {$c -notcontains $_.ResourceGroupName}
+$rg = Get-AzureResourceGroup | where {$_.Location -like $location } | where {$_.ResourceGroupName -like $rgPrefix } #| where {$c -notcontains $_.ResourceGroupName}
 foreach($g in $rg)
 {
     Start-job -Name "job" -ScriptBlock $sb -ArgumentList $g.ResourceGroupName

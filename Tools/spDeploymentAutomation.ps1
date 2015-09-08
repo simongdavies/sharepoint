@@ -1,15 +1,15 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 
 # Count of runs
-$count = 3
+$count = 2
 
 # Variables
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-nocustomscript.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "westeurope"
-$rgprefix = "T43p"
-$premium = $true
+$location = "southeastasia"
+$rgprefix = "T45s"
+$premium = $false
 
 # Generate parameter object
 $hash = @{};
