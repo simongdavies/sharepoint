@@ -1,0 +1,53 @@
+{
+		"location" : {
+    		"value" :"westeurope"
+  		},
+		"storageAccountType": {
+			"value": "Premium_LRS"
+		},
+		"storageAccountNewOrExisting" : {
+			"value": "new"
+		},
+		"adminUsername": {
+			"value": "admin123vm"
+		},
+		"adminPassword": {
+			"value": "Admin123_!"
+		},
+		"sqlServerServiceAccountUserName": {
+			"value": "admin123sql"
+		},
+		"sqlServerServiceAccountPassword": {
+      		"value" : "We234kj@98"
+		},
+		"sharePointSetupUserAccountUserName": {
+			"value": "admin123sp"
+		},
+		"sharePointSetupUserAccountPassword": {
+      		"value" : "Adm1np@ss!34"
+		},
+		"sharePointFarmAccountPassword": {
+			"value": "Admin123sp!farm"
+		},
+		"sharePointFarmPassphrasePassword": {
+			"value": "P@ssw0rd!23"
+		},
+		"sppublicIPAddressName" : {
+			"value" : "sppublicIP"
+		},
+		"spDNSPrefix" : {
+			"value" : ""
+		},
+		"storageAccountName":{
+			"value" : ""
+		},
+		"adVMSize" : {
+			"value" : ""
+		},
+		"sqlVMSize" : {
+			"value" : ""
+		},
+		"spVMSize" : {
+			"value" : ""
+		},
+}
