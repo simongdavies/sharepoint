@@ -22,7 +22,7 @@ $obj = @();
 $obj2 = @(); 
  
 #Get all AzureResourceGroups 
-$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T28*" }
+$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T51*" }
 foreach($rg in $groups)
 { 
     # Collect all VMs
