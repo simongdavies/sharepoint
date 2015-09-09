@@ -38,7 +38,7 @@
 		"spDNSPrefix" : {
 			"value" : ""
 		},
-		"storageAccountName":{
+		"storageAccountName" : {
 			"value" : ""
 		},
 		"adVMSize" : {
@@ -49,5 +49,8 @@
 		},
 		"spVMSize" : {
 			"value" : ""
-		},
+		}, 
+		"baseUrl" : {
+			"value" : "https://raw.githubusercontent.com/kenazk/sharepoint/master/nonha"
+		}
 }

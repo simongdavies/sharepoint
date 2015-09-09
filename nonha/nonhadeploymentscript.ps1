@@ -5,15 +5,15 @@
 #######################################
 
 # Count of runs
-$count = 10
+$count = 2
 
 # Variables
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\nonha\mainTemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\nonha\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "T51s"
-$premium = $false
+$rgprefix = "SPNONHA"
+$premium = $true
 
 # Generate parameter object
 $hash = @{};
@@ -26,7 +26,7 @@ foreach($param in $params.psobject.Properties)
 for($i = 0; $i -lt $count; $i++)
 {
     # Create new Resource Group
-    $d = get-date
+    $d = get-date 
     $rgname = $rgprefix + '-'+ $d.Year + $d.Month + $d.Day + '-' + $d.Hour + $d.Minute + $d.Second
     New-AzureResourceGroup -Name $rgname -Location $location -Verbose 
     
@@ -35,6 +35,7 @@ for($i = 0; $i -lt $count; $i++)
     $hash.spDnsPrefix = "spnonha" + $dsuffix
     $hash.storageAccountName = "sa" + $dsuffix
     $hash.location = $location
+    $hash.adminUsername = "admin123"
 
     if ($premium)
     {

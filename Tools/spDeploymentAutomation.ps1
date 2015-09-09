@@ -1,15 +1,19 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 
+#######################################
+###         HA SHAREPOINT           ###
+#######################################
+
 # Count of runs
-$count = 10
+$count = 2
 
 # Variables
-$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"
+$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\tests\mainTemplate-serialized.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "T51s"
-$premium = $false
+$rgprefix = "NoListener"
+$premium = $true
 
 # Generate parameter object
 $hash = @{};
