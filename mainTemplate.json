@@ -1735,7 +1735,7 @@
 			"location": "[parameters('location')]",
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1')]",
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0/extensions/ConfigureSPAppServer')]"
+				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').spappVMName,'0/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
 				"publisher": "Microsoft.Powershell",

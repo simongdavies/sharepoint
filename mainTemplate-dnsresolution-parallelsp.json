@@ -448,7 +448,7 @@
 			"fswConfigurationFunction":"CreateFileShareWitness.ps1\\CreateFileShareWitness",
 			"sqlAOPrepareModulesURL":"[concat(variables('assetLocation'),'/PrepareAlwaysOnSqlServer.ps1.zip')]",
 			"sqlAOPrepareConfigurationFunction":"PrepareAlwaysOnSqlServer.ps1\\PrepareAlwaysOnSqlServer",
-			"createClusterModulesURL":"[concat(variables('assetLocation'),'/CreateFailoverCluster.ps1.zip')]",
+			"createClusterModulesURL":"[concat(variables('assetLocation'),'/CreateFailoverCluster-nolistener.ps1.zip')]",
 			"createClusterConfigurationFunction":"CreateFailoverCluster.ps1\\CreateFailoverCluster",
 			"spModulesURL":"[concat(variables('assetLocation'),'/ConfigureSharePointServerHA.ps1.zip')]",
 			"spConfigurationFunction":"ConfigureSharePointServerHA.ps1\\ConfigureSharePointServerHA",
@@ -456,7 +456,8 @@
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1",
-		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges();  while((Resolve-DnsName download.microsoft.com -ErrorAction Ignore) -eq $null){Start-Sleep -s 10}\""
+		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); while(((Resolve-DNSName download.microsoft.com -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10} \"",
+		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges();  while(((Resolve-DNSName download.microsoft.com -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10} while(((Resolve-DNSName sphafarm.localrosoft.com -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10}\""
 	},
 	"resources": [
 		{
@@ -1049,7 +1050,7 @@
             "type": "CustomScriptExtension",
             "typeHandlerVersion": "1.4",
             "settings": {
-              "commandToExecute": "[variables('commands')]"
+              "commandToExecute": "[variables('adCommands')]"
             }
           }
         },
@@ -1063,9 +1064,10 @@
 						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adPDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
-						"publisher": "Microsoft.Powershell",
+						"publisher": "Microsoft.Powershell.Test",
 						"type": "DSC",
 						"typeHandlerVersion": "2.4",
+						"autoUpgradeMinorVersion": true,
 						"settings": {
 							"modulesURL": "[variables('configuration').adPDCModulesURL]",
 							"configurationFunction": "[variables('configuration').adPDCConfigurationFunction]",
@@ -1181,7 +1183,7 @@
 						"type": "CustomScriptExtension",
 						"typeHandlerVersion": "1.4",
 						"settings": {
-							"commandToExecute": "[variables('commands')]"
+							"commandToExecute": "[variables('adCommands')]"
 						}
 					}
 				},
@@ -1195,9 +1197,10 @@
 						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName,'/extensions/EnableDnsClientLogging')]"
 					],
 					"properties": {
-						"publisher": "Microsoft.Powershell",
+						"publisher": "Microsoft.Powershell.Test",
 						"type": "DSC",
 						"typeHandlerVersion": "2.4",
+						"autoUpgradeMinorVersion": true,
 						"settings": {
 							"modulesURL": "[variables('configuration').adBDCModulesURL]",
 							"configurationFunction": "[variables('configuration').adBDCConfigurationFunction]",
@@ -1289,27 +1292,27 @@
 							"id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, copyindex(),'-nic'))]"
 						}
 					]
-				},
-				"resources" : [
-					{
-						"type": "Microsoft.Compute/virtualMachines/extensions",
-						"name": "[concat(variables('vmSettings').sqlVMName, copyindex(),'/EnableDnsClientLogging')]",
-						"location": "[parameters('location')]",
-						"apiVersion": "2015-05-01-preview",
-						"dependsOn": [
-							"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlVMName, copyindex())]"
-						],
-						"properties": {
-							"publisher": "Microsoft.Compute",
-							"type": "CustomScriptExtension",
-							"typeHandlerVersion": "1.4",
-							"settings": {
-									"commandToExecute": "[variables('commands')]"
-							}
+				}
+			},
+			"resources" : [
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').sqlVMName, copyindex(),'/EnableDnsClientLogging')]",
+					"location": "[parameters('location')]",
+					"apiVersion": "2015-05-01-preview",
+					"dependsOn": [
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlVMName, copyindex())]"
+					],
+					"properties": {
+						"publisher": "Microsoft.Compute",
+						"type": "CustomScriptExtension",
+						"typeHandlerVersion": "1.4",
+						"settings": {
+								"commandToExecute": "[variables('commands')]"
 						}
 					}
-				]
-			}
+				}
+			]
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1322,9 +1325,10 @@
 				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'0-nic')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').sqlAOPrepareModulesURL]",
 					"configurationFunction": "[variables('configuration').sqlAOPrepareConfigurationFunction]",
@@ -1365,9 +1369,10 @@
 				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'1-nic')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').createClusterModulesURL]",
 					"configurationFunction": "[variables('configuration').createClusterConfigurationFunction]",
@@ -1466,27 +1471,27 @@
 							"id": "[resourceId('Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]"
 						}
 					]
-				},
-				"resources": [
-	        {
-						"type": "Microsoft.Compute/virtualMachines/extensions",
-	          "name": "[concat(variables('vmSettings').sqlwVMName,'/EnableDnsClientLogging')]",
-	          "location": "[parameters('location')]",
-	          "apiVersion": "2015-05-01-preview",
-	          "dependsOn": [
-	            "[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName)]"
-	          ],
-	          "properties": {
-	            "publisher": "Microsoft.Compute",
-	            "type": "CustomScriptExtension",
-	            "typeHandlerVersion": "1.4",
-	            "settings": {
-	              "commandToExecute": "[variables('commands')]"
-	            }
-	          }
-	        }
-	      ]
-			}
+				}
+			},
+			"resources": [
+        {
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(variables('vmSettings').sqlwVMName,'/EnableDnsClientLogging')]",
+          "location": "[parameters('location')]",
+          "apiVersion": "2015-05-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName)]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.4",
+            "settings": {
+              "commandToExecute": "[variables('commands')]"
+            }
+          }
+        }
+      ]
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1495,13 +1500,14 @@
 			"location": "[parameters('location')]",
 			"dependsOn":[
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName)]",
-				"Microsoft.Resources/deployments/UpdateSQLWNic",
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName,'/extensions/EnableDnsClientLogging')]"
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName,'/extensions/EnableDnsClientLogging')]",
+				"Microsoft.Resources/deployments/UpdateSQLWNic"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').fswModulesURL]",
 					"configurationFunction": "[variables('configuration').fswConfigurationFunction]",
@@ -1742,27 +1748,27 @@
 							"id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spappVMName, copyindex(),'-nic'))]"
 						}
 					]
-				},
-				"resources" : [
-					{
-						"type": "Microsoft.Compute/virtualMachines/extensions",
-						"name": "[concat(variables('vmSettings').spappVMName, copyindex(),'/EnableDnsClientLogging')]",
-						"location": "[parameters('location')]",
-						"apiVersion": "2015-05-01-preview",
-						"dependsOn": [
-							"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName, copyindex())]"
-						],
-						"properties": {
-							"publisher": "Microsoft.Compute",
-							"type": "CustomScriptExtension",
-							"typeHandlerVersion": "1.4",
-							"settings": {
-								"commandToExecute": "[variables('commands')]"
-							}
+				}
+			},
+			"resources" : [
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').spappVMName, copyindex(),'/EnableDnsClientLogging')]",
+					"location": "[parameters('location')]",
+					"apiVersion": "2015-05-01-preview",
+					"dependsOn": [
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName, copyindex())]"
+					],
+					"properties": {
+						"publisher": "Microsoft.Compute",
+						"type": "CustomScriptExtension",
+						"typeHandlerVersion": "1.4",
+						"settings": {
+							"commandToExecute": "[variables('commands')]"
 						}
 					}
-				]
-			}
+				}
+			]
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1775,9 +1781,10 @@
 				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').sqlVMName,'1/extensions/CreateCluster')]"
 				],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1832,12 +1839,13 @@
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1')]",
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1','/extensions/EnableDnsClientLogging')]",
-				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').sqlVMName,'1/extensions/CreateCluster')]"
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0','/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1945,27 +1953,27 @@
 							"id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spwebVMName, copyindex(),'-nic'))]"
 						}
 					]
-				},
-				"resources" : [
-					{
-						"type": "Microsoft.Compute/virtualMachines/extensions",
-						"name": "[concat(variables('vmSettings').spwebVMName, copyindex(),'/EnableDnsClientLogging')]",
-						"location": "[parameters('location')]",
-						"apiVersion": "2015-05-01-preview",
-						"dependsOn": [
-							"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName, copyindex())]"
-						],
-						"properties": {
-							"publisher": "Microsoft.Compute",
-							"type": "CustomScriptExtension",
-							"typeHandlerVersion": "1.4",
-							"settings": {
-								"commandToExecute": "[variables('commands')]"
-							}
+				}
+			},
+			"resources" : [
+				{
+					"type": "Microsoft.Compute/virtualMachines/extensions",
+					"name": "[concat(variables('vmSettings').spwebVMName, copyindex(),'/EnableDnsClientLogging')]",
+					"location": "[parameters('location')]",
+					"apiVersion": "2015-05-01-preview",
+					"dependsOn": [
+						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName, copyindex())]"
+					],
+					"properties": {
+						"publisher": "Microsoft.Compute",
+						"type": "CustomScriptExtension",
+						"typeHandlerVersion": "1.4",
+						"settings": {
+							"commandToExecute": "[variables('commands')]"
 						}
 					}
-				]
-			}
+				}
+			]
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines/extensions",
@@ -1978,9 +1986,10 @@
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -2035,12 +2044,13 @@
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName,'1')]",
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName,'1/extensions/EnableDnsClientLogging')]",
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1/extensions/ConfigureSPAppServer')]"
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName,'0/extensions/ConfigureSPWebServer')]"
 			],
 			"properties": {
-				"publisher": "Microsoft.Powershell",
+				"publisher": "Microsoft.Powershell.Test",
 				"type": "DSC",
 				"typeHandlerVersion": "2.4",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
