@@ -457,7 +457,7 @@
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1",
 		"adCommands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges(); while(((Resolve-DNSName download.microsoft.com -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10} \"",
-		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges();  while(((Resolve-DNSName download.microsoft.com -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10} while(((Resolve-DNSName sphafarm.localrosoft.com -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10}\""
+		"commands" : "powershell.exe -ExecutionPolicy Unrestricted -command \"$dnslog = New-Object System.Diagnostics.Eventing.Reader.EventLogConfiguration 'Microsoft-Windows-DNS-Client/Operational'; $dnslog.IsEnabled=$true; $dnslog.SaveChanges();  while(((Resolve-DNSName download.microsoft.com -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10} while(((Resolve-DNSName sphafarm.local -Type A) | where { $_.Type -eq \"A\"}).Count -eq 0){Start-Sleep -s 10}\""
 	},
 	"resources": [
 		{
