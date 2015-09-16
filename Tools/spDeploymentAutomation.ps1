@@ -11,8 +11,8 @@ $count = 5
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-dnsresolution-parallelsp.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "westeurope"
-$rgprefix = "T63p"
+$location = "southeastasia"
+$rgprefix = "T64p"
 $premium = $true
 
 # Generate parameter object

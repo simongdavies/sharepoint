@@ -1,6 +1,6 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 #Get all AzureResourceGroups 
-$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T63*" }
+$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T64*" }
 
 $obj = @();
 $obj2 = @();
