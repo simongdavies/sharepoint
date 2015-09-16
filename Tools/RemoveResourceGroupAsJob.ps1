@@ -1,9 +1,9 @@
 ﻿switch-azuremode -name AzureResourceManager
 
 $location = "*"
-$rgPrefix = "T60*"
+$rgPrefix = "A*"
 
-$c = get-content C:\daily\2015-8-28\rgs.txt
+$c = get-content C:\daily\2015-9-15\keep.txt
 
 $sb = {
         param($rgname)

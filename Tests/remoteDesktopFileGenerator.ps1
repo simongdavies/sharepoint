@@ -1,6 +1,6 @@
 ﻿switch-azuremode -name AzureResourceManager
 
-$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T60*" }
+$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T62*" }
 $results = @();
 
 $d = get-date
