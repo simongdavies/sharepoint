@@ -996,7 +996,7 @@
 				},
 				"parameters" : {
 					"adPDCVMName": {
-					  "value": "[parameters('adPDCVMName')]"
+					  "value": "[variables('vmSettings').adPDCVMName]"
 					},
 					"location": {
 					  "value": "[parameters('location')]"
@@ -1024,9 +1024,6 @@
 					},
 					"vmContainerName" : {
 					  "value" : "[variables('vmSettings').vmContainerName]"
-					},
-					"windowsDiskSize" : {
-					  "value" : "[variables('vmSettings').windowsDiskSize]"
 					},
 					"adPDCNicName" : {
 					  "value" : "[variables('adPDCNicName')]"
