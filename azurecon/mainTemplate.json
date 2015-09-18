@@ -455,7 +455,8 @@
 			"spWebIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spWebIPNewOrExisting'),'.json')]",
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]",
 			"availabilitySetSetupURL" : "[concat(parameters('baseUrl'),'/availabilitySets.json')]",
-			"installingPrimaryDCURL" : "[concat(parameters('baseUrl'),'/installingPrimaryDomainController.json')]"
+			"installingPrimaryDCURL" : "[concat(parameters('baseUrl'),'/installingPrimaryDomainController.json')]",
+			"installingBackupDCURL" : "[concat(parameters('baseUrl'),'/installingBackupDomainController.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
 	},
@@ -985,7 +986,7 @@
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '0'))]",
 	      "[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]",
-	      "CreatingAvailabilitySets",
+	      "Microsoft.Resources/deployments/CreatingAvailabilitySets",
 	      "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').rdpLBName)]"
 			],
 			"properties" : {
@@ -1044,7 +1045,7 @@
 			}
 		},
 		{
-			"name": "UpdateVNetDNS1",
+			"name": "UpdatingDNStoPrimaryADVM",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
@@ -1066,97 +1067,69 @@
 			}
 		},
 		{
-			"apiVersion": "2015-05-01-preview",
-			"type": "Microsoft.Compute/virtualMachines",
-			"name": "[variables('vmSettings').adBDCVMName]",
-			"location": "[parameters('location')]",
+			"name" : "InstallingBackupADDomainController",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2015-01-01",
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '0'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('adBDCNicName'))]",
-				"CreatingAvailabilitySets",
-				"Microsoft.Resources/deployments/UpdateVNetDNS1"
+				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
+				"Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
 			],
-			"properties": {
-				"hardwareProfile": {
-					"vmSize": "[parameters('adVMSize')]"
+			"properties" : {
+				"mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').installingBackupDCURL]",
+          "contentVersion": "1.0.0.0"
 				},
-				"availabilitySet": {
-					"id": "[reference('CreatingAvailabilitySets').outputs.adAvailabilitySetName.value]"
-				},
-				"osProfile": {
-					"computername": "[variables('vmSettings').adBDCVMName]",
-					"adminUsername": "[parameters('adminUsername')]",
-					"adminPassword": "[parameters('adminPassword')]"
-				},
-				"storageProfile": {
-					"imageReference": {
-						"publisher": "[variables('vmSettings').windowsImagePublisher]",
-						"offer": "[variables('vmSettings').windowsImageOffer]",
-						"sku": "[variables('vmSettings').windowsImageSKU]",
-						"version": "latest"
+				"parameters" : {
+					"adBDCVMName": {
+					  "value": "[variables('vmSettings').adBDCVMName]"
 					},
-					"osDisk": {
-						"name": "osdisk",
-						"vhd": {
-							"uri": "[concat('http://',parameters('storageAccountNamePrefix'),'0.blob.core.windows.net/',variables('vmSettings').vmContainerName,'/',variables('vmSettings').adBDCVMName,'-osdisk.vhd')]"
-						},
-						"caching": "ReadWrite",
-						"createOption": "FromImage"
+					"location": {
+					  "value": "[parameters('location')]"
 					},
-					"dataDisks": [
-						{
-							"vhd": {
-								"uri":"[concat('http://',parameters('storageAccountNamePrefix'),'0.blob.core.windows.net/',variables('vmSettings').vmContainerName,'/', variables('vmSettings').adBDCVMName,'data-1.vhd')]"
-								},
-							"name":"[concat(variables('vmSettings').adBDCVMName,'-data-disk1')]",
-							"createOption": "empty",
-							"caching" : "None",
-							"diskSizeGB": "[variables('vmSettings').windowsDiskSize]",
-							"lun": 0
-						}
-					]
-				},
-				"networkProfile": {
-					"networkInterfaces": [
-						{
-							"id": "[resourceId('Microsoft.Network/networkInterfaces',variables('adBDCNicName'))]"
-						}
-					]
-				}
-			},
-			"resources" : [
-				{
-					"type": "Microsoft.Compute/virtualMachines/extensions",
-					"name": "[concat(variables('vmSettings').adBDCVMName,'/CreateBDC')]",
-					"apiVersion": "2015-05-01-preview",
-					"location": "[parameters('location')]",
-					"dependsOn":[
-						"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').adBDCVMName)]"
-					],
-					"properties": {
-						"publisher": "Microsoft.Powershell",
-						"type": "DSC",
-						"typeHandlerVersion": "2.5",
-						"autoUpgradeMinorVersion": true,
-						"settings": {
-							"modulesURL": "[variables('configuration').adBDCModulesURL]",
-							"configurationFunction": "[variables('configuration').adBDCConfigurationFunction]",
-							"properties": {
-								"domainName": "[parameters('domainName')]",
-								"adminCreds":{
-									"userName": "[parameters('adminUserName')]",
-									"password": "privateSettingsRef:adminPassword"
-								}
-							}
-						},
-						"protectedSettings": {
-							"items": {
-								"adminPassword": "[parameters('adminPassword')]"
-							}
-						}
+					"storageAccountNamePrefix": {
+					  "value": "[parameters('storageAccountNamePrefix')]"
+					},
+					"availabilitySet" : {
+					  "value" : "[reference('CreatingAvailabilitySets').outputs.adAvailabilitySetName.value]"
+					},
+					"adVMSize" : {
+					  "value" : "[parameters('adVMSize')]"
+					},
+					"adminUsername" : {
+					  "value" : "[parameters('adminUsername')]"
+					},
+					"adminPassword" : {
+					  "value" : "[parameters('adminPassword')]"
+					},
+					"windowsImagePublisher" : {
+					  "value" : "[variables('vmSettings').windowsImagePublisher]"
+					},
+					"windowsImageOffer" : {
+					  "value" : "[variables('vmSettings').windowsImageOffer]"
+					},
+					"windowsImageSKU" : {
+					  "value" : "[variables('vmSettings').windowsImageSKU]"
+					},
+					"vmContainerName" : {
+					  "value" : "[variables('vmSettings').vmContainerName]"
+					},
+					"adBDCNicName" : {
+					  "value" : "[variables('adBDCNicName')]"
+					},
+					"domainName" : {
+					  "value" : "[parameters('domainName')]"
+					},
+					"adBDCConfigurationFunction" : {
+					  "value" : "[variables('configuration').adBDCConfigurationFunction]"
+					},
+					"adBDCModulesURL" : {
+					  "value" : "[variables('configuration').adBDCModulesURL]"
 					}
 				}
-			]
+			}
 		},
 		{
 			"apiVersion": "2015-05-01-preview",
@@ -1170,8 +1143,8 @@
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '1'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, copyindex(),'-nic'))]",
-				"CreatingAvailabilitySets",
-				"Microsoft.Resources/deployments/UpdateVNetDNS1"
+				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
+				"Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
 			],
 			"properties": {
 				"hardwareProfile": {
@@ -1340,8 +1313,8 @@
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '1'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]",
-				"CreatingAvailabilitySets",
-				"Microsoft.Resources/deployments/UpdateVNetDNS1"
+				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
+				"Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
 			],
 			"properties": {
 				"hardwareProfile": {
@@ -1427,11 +1400,11 @@
 			}
 		},
 		{
-			"name": "UpdateVNetDNS2",
+			"name": "UpdatingDNSwithBackupADVM",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').adBDCVMName,'/extensions/CreateBDC')]"
+				"Microsoft.Resources/deployments/InstallingBackupADDomainController"
 			],
 			"properties": {
 				"mode": "Incremental",
@@ -1449,11 +1422,11 @@
 			}
 		},
 		{
-			"name": "UpdateSQLWNic",
+			"name": "UpdatingSQLWNic",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"Microsoft.Resources/deployments/UpdateVNetDNS2"
+				"Microsoft.Resources/deployments/UpdatingDNSwithBackupADVM"
 			],
 			"properties": {
 				"mode": "Incremental",
@@ -1491,11 +1464,11 @@
 			}
 		},
 		{
-			"name":  "[concat('Update',variables('vmSettings').sqlVMName,'0-nic')]",
+			"name":  "[concat('Updating',variables('vmSettings').sqlVMName,'0-nic')]",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"Microsoft.Resources/deployments/UpdateVNetDNS2",
+				"Microsoft.Resources/deployments/UpdatingDNSwithBackupADVM",
 				"Microsoft.Resources/deployments/UpdateSQLWNic"
 			],
 			"properties": {
@@ -1539,7 +1512,7 @@
 			}
 		},
 		{
-			"name":  "[concat('Update',variables('vmSettings').sqlVMName,'1-nic')]",
+			"name":  "[concat('Updating',variables('vmSettings').sqlVMName,'1-nic')]",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
@@ -1597,8 +1570,8 @@
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '2'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spappVMName, copyindex(),'-nic'))]",
-				"CreatingAvailabilitySets",
-				"Microsoft.Resources/deployments/UpdateVNetDNS2"
+				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
+				"Microsoft.Resources/deployments/UpdatingDNSwithBackupADVM"
 			],
 			"properties": {
 				"hardwareProfile": {
@@ -1781,8 +1754,8 @@
 			"dependsOn": [
 				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '2'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spwebVMName, copyindex(),'-nic'))]",
-				"CreatingAvailabilitySets",
-				"Microsoft.Resources/deployments/UpdateVNetDNS2"
+				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
+				"Microsoft.Resources/deployments/UpdatingDNSwithBackupADVM"
 			],
 			"properties": {
 				"hardwareProfile": {
