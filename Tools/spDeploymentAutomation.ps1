@@ -13,7 +13,7 @@ $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\azurecon\mainTemplate
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "AC2"
+$rgprefix = "AC3"
 $premium = $true
 
 # Generate parameter object

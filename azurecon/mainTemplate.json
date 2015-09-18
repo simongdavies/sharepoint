@@ -456,7 +456,8 @@
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]",
 			"availabilitySetSetupURL" : "[concat(parameters('baseUrl'),'/availabilitySets.json')]",
 			"installingPrimaryDCURL" : "[concat(parameters('baseUrl'),'/installingPrimaryDomainController.json')]",
-			"installingBackupDCURL" : "[concat(parameters('baseUrl'),'/installingBackupDomainController.json')]"
+			"installingBackupDCURL" : "[concat(parameters('baseUrl'),'/installingBackupDomainController.json')]",
+			"CreatingSQLAlwaysOnClusterUrl": "[concat(parameters('baseUrl'),'/creatingSQLAlwaysOnCluster.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
 	},
@@ -1132,274 +1133,6 @@
 			}
 		},
 		{
-			"apiVersion": "2015-05-01-preview",
-			"type": "Microsoft.Compute/virtualMachines",
-			"name": "[concat(variables('vmSettings').sqlVMName, copyindex())]",
-			"location": "[parameters('location')]",
-			"copy": {
-				"name": "sqlvirtualMachineLoop",
-				"count": "[variables('vmSettings').noOfSqlVMs]"
-			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '1'))]",
-				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, copyindex(),'-nic'))]",
-				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
-				"Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
-			],
-			"properties": {
-				"hardwareProfile": {
-					"vmSize": "[parameters('sqlVMSize')]"
-				},
-				"availabilitySet": {
-					"id": "[reference('CreatingAvailabilitySets').outputs.sqlAvailabilitySetName.value]"
-				},
-				"osProfile": {
-					"computername": "[concat(variables('vmSettings').sqlVMName, copyindex())]",
-					"adminUsername": "[parameters('adminUsername')]",
-					"adminPassword": "[parameters('adminPassword')]"
-				},
-				"storageProfile": {
-					"imageReference": {
-						"publisher": "[variables('vmSettings').sqlImagePublisher]",
-						"offer": "[variables('vmSettings').sqlImageOffer]",
-						"sku": "[variables('vmSettings').sqlImageSKU]",
-						"version": "latest"
-					},
-					"osDisk": {
-						"name": "osdisk",
-						"vhd": {
-							"uri": "[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',variables('vmSettings').vmContainerName,'/',variables('vmSettings').sqlVMName, copyindex(), '-osdisk.vhd')]"
-						},
-						"caching": "ReadWrite",
-						"createOption": "FromImage"
-					},
-					"dataDisks": [
-						{
-							"vhd": {
-								"uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',variables('vmSettings').vmContainerName,'/', variables('vmSettings').sqlVMName, copyindex(), '-Data-1.vhd')]"
-							},
-							"name":"[concat(variables('vmSettings').sqlVMName, copyindex(),'-data-disk1')]",
-							"caching" : "None",
-							"createOption": "empty",
-							"diskSizeGB": "[variables('vmSettings').sqlDiskSize]",
-							"lun": 0
-						},
-						{
-							"vhd": {
-								"uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',variables('vmSettings').vmContainerName,'/', variables('vmSettings').sqlVMName, copyindex(), '-log.vhd')]"
-							},
-							"name":"[concat(variables('vmSettings').sqlVMName, copyindex(),'-log-disk1')]",
-							"caching" : "None",
-							"createOption": "empty",
-							"diskSizeGB": "[variables('vmSettings').sqlDiskSize]",
-							"lun": 1
-						}
-					]
-				},
-				"networkProfile": {
-					"networkInterfaces": [
-						{
-							"id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, copyindex(),'-nic'))]"
-						}
-					]
-				}
-			}
-		},
-		{
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(variables('vmSettings').sqlVMName,'0/sqlAOPrepare')]",
-			"apiVersion": "2015-05-01-preview",
-			"location": "[parameters('location')]",
-			"dependsOn":[
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlVMName,'0')]",
-				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').sqlwVMName,'/extensions/CreateFileShareWitness')]",
-				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'0-nic')]"
-			],
-			"properties": {
-				"publisher": "Microsoft.Powershell",
-				"type": "DSC",
-				"typeHandlerVersion": "2.5",
-				"autoUpgradeMinorVersion": true,
-				"settings": {
-					"modulesURL": "[variables('configuration').sqlAOPrepareModulesURL]",
-					"configurationFunction": "[variables('configuration').sqlAOPrepareConfigurationFunction]",
-					"properties": {
-						"domainName": "[parameters('domainName')]",
-						"sqlAlwaysOnEndpointName":"[variables('sqlAOEPName')]",
-						"adminCreds":{
-							"userName": "[parameters('adminUserName')]",
-							"password": "privateSettingsRef:AdminPassword"
-						},
-						"sqlServiceCreds":{
-							"userName": "[parameters('sqlServerServiceAccountUserName')]",
-							"password": "privateSettingsRef:SqlServerServiceAccountPassword"
-						},
-						"sharePointSetupUserAccountcreds":{
-							"userName": "[parameters('sharePointSetupUserAccountUserName')]",
-							"password": "privateSettingsRef:SharePointSetupUserAccountPassword"
-						}
-					}
-				},
-				"protectedSettings": {
-					"items": {
-						"adminPassword": "[parameters('adminPassword')]",
-						"sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
-						"sharePointSetupUserAccountPassword": "[parameters('sharePointSetupUserAccountPassword')]"
-					}
-				}
-			}
-		},
-		{
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(variables('vmSettings').sqlVMName,'1/CreateCluster')]",
-			"apiVersion": "2015-05-01-preview",
-			"location": "[parameters('location')]",
-			"dependsOn":[
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlVMName,'1')]",
-				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').sqlVMName,'0/extensions/sqlAOPrepare')]",
-				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'1-nic')]"
-			],
-			"properties": {
-				"publisher": "Microsoft.Powershell",
-				"type": "DSC",
-				"typeHandlerVersion": "2.5",
-				"autoUpgradeMinorVersion": true,
-				"settings": {
-					"modulesURL": "[variables('configuration').createClusterModulesURL]",
-					"configurationFunction": "[variables('configuration').createClusterConfigurationFunction]",
-					"properties": {
-						"domainName": "[parameters('domainName')]",
-						"clusterName":"[variables('clusterName')]",
-						"sharePath":"[concat('\\\\',variables('vmSettings').sqlwVMName,'\\',variables('sharePath'))]",
-						"nodes":["[concat(variables('vmSettings').sqlVMName,'0')]","[concat(variables('vmSettings').sqlVMName,'1')]"],
-						"sqlAlwaysOnEndpointName":"[variables('sqlAOEPName')]",
-						"sqlAlwaysOnAvailabilityGroupName":"[variables('sqlAOAGName')]",
-						"sqlAlwaysOnAvailabilityGroupListenerName":"[variables('sqlAOListenerName')]",
-						"sqlAlwaysOnAvailabilityGroupListenerPort":1433,
-						"databaseNames":null,
-						"lbName":"[variables('lbSettings').sqlLBName]",
-						"lbAddress":"[parameters('sqlLBIPAddress')]",
-						"primaryReplica":"[concat(variables('vmSettings').sqlVMName,'1')]",
-						"secondaryReplica":"[concat(variables('vmSettings').sqlVMName,'0')]",
-						"dnsServerName":"[variables('vmSettings').adPDCVMName]",
-						"adminCreds":{
-							"userName": "[parameters('adminUserName')]",
-							"password": "privateSettingsRef:adminPassword"
-						},
-						"sqlServiceCreds":{
-							"userName": "[parameters('sqlServerServiceAccountUserName')]",
-							"password": "privateSettingsRef:sqlServerServiceAccountPassword"
-						},
-						"sharePointSetupUserAccountcreds":{
-							"userName": "[parameters('sharePointSetupUserAccountUserName')]",
-							"password": "privateSettingsRef:sharePointSetupUserAccountPassword"
-						}
-					}
-				},
-				"protectedSettings": {
-					"items": {
-						"adminPassword": "[parameters('adminPassword')]",
-						"sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
-						"sharePointSetupUserAccountPassword": "[parameters('sharePointSetupUserAccountPassword')]"
-					}
-				}
-			}
-		},
-		{
-			"apiVersion": "2015-05-01-preview",
-			"type": "Microsoft.Compute/virtualMachines",
-			"name": "[variables('vmSettings').sqlwVMName]",
-			"location": "[parameters('location')]",
-			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '1'))]",
-				"[resourceId('Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]",
-				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
-				"Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
-			],
-			"properties": {
-				"hardwareProfile": {
-					"vmSize": "[parameters('witnessVMSize')]"
-				},
-				"availabilitySet": {
-					"id": "[reference('CreatingAvailabilitySets').outputs.sqlAvailabilitySetName.value]"
-				},
-				"osProfile": {
-					"computername": "[variables('vmSettings').sqlwVMName]",
-					"adminUsername": "[parameters('adminUsername')]",
-					"adminPassword": "[parameters('adminPassword')]"
-				},
-				"storageProfile": {
-					"imageReference": {
-						"publisher": "[variables('vmSettings').windowsImagePublisher]",
-						"offer": "[variables('vmSettings').windowsImageOffer]",
-						"sku": "[variables('vmSettings').windowsImageSKU]",
-						"version": "latest"
-					},
-					"osDisk": {
-						"name": "osdisk",
-						"vhd": {
-							"uri": "[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',variables('vmSettings').vmContainerName,'/',variables('vmSettings').sqlwVMName,'-osdisk.vhd')]"
-						},
-						"caching": "ReadWrite",
-						"createOption": "FromImage"
-					},
-					"dataDisks": [
-						{
-							"vhd": {
-								"uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',variables('vmSettings').vmContainerName,'/', variables('vmSettings').sqlwVMName,'-data-1.vhd')]"
-								},
-							"name":"[concat(variables('vmSettings').sqlwVMName,'-data-disk1')]",
-							"caching" : "None",
-							"createOption": "empty",
-							"diskSizeGB": "[variables('vmSettings').windowsDiskSize]",
-							"lun": 0
-						}
-					]
-				},
-				"networkProfile": {
-					"networkInterfaces": [
-						{
-							"id": "[resourceId('Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]"
-						}
-					]
-				}
-			}
-		},
-		{
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(variables('vmSettings').sqlwVMName,'/CreateFileShareWitness')]",
-			"apiVersion": "2015-05-01-preview",
-			"location": "[parameters('location')]",
-			"dependsOn":[
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').sqlwVMName)]",
-				"Microsoft.Resources/deployments/UpdateSQLWNic"
-			],
-			"properties": {
-				"publisher": "Microsoft.Powershell",
-				"type": "DSC",
-				"typeHandlerVersion": "2.5",
-				"autoUpgradeMinorVersion": true,
-				"settings": {
-					"modulesURL": "[variables('configuration').fswModulesURL]",
-					"configurationFunction": "[variables('configuration').fswConfigurationFunction]",
-					"properties": {
-						"domainName": "[parameters('domainName')]",
-						"SharePath":"[variables('sharePath')]",
-						"adminCreds":{
-							"userName": "[parameters('adminUserName')]",
-							"password": "privateSettingsRef:adminPassword"
-						}
-
-					}
-				},
-				"protectedSettings": {
-					"items": {
-						"adminPassword": "[parameters('adminPassword')]"
-					}
-				}
-			}
-		},
-		{
 			"name": "UpdatingDNSwithBackupADVM",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
@@ -1418,6 +1151,136 @@
 					"virtualNetworkAddressRange": {"value":"[parameters('virtualNetworkAddressRange')]"},
 					"subnets": {"value":"[variables('subnets')]"},
 					"DNSServerAddress": {"value":["[parameters('adPDCNICIPAddress')]","[parameters('adBDCNICIPAddress')]"]}
+				}
+			}
+		},
+		{
+			"name" : "CreatingSQLAlwaysOnCluster",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2015-01-01",
+			"dependsOn": [
+				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '1'))]",
+	      "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('sqlVMName'), '0-nic'))]",
+				"[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('sqlVMName'), '1-nic'))]",
+				"[resourceId('Microsoft.Network/networkInterfaces',parameters('sqlwNicName'))]",
+	      "Microsoft.Resources/deployments/CreatingAvailabilitySets",
+	      "Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
+			],
+			"properties" : {
+				"mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').CreatingSQLAlwaysOnClusterUrl]",
+          "contentVersion": "1.0.0.0"
+				},
+				"parameters" : {
+					"sqlVMName": {
+					  "value": "[variables('vmSettings').sqlVMName]"
+					},
+					"location": {
+					  "value": "[parameters('location')]"
+					},
+					"storageAccountNamePrefix": {
+					  "value": "[parameters('storageAccountNamePrefix')]"
+					},
+					"availabilitySet" : {
+					  "value" : "[reference('CreatingAvailabilitySets').outputs.sqlAvailabilitySetName.value]"
+					},
+					"sqlVMSize" : {
+					  "value" : "[parameters('sqlVMSize')]"
+					},
+					"adminUsername" : {
+					  "value" : "[parameters('adminUsername')]"
+					},
+					"adminPassword" : {
+					  "value" : "[parameters('adminPassword')]"
+					},
+					"windowsImagePublisher" : {
+					  "value" : "[variables('vmSettings').windowsImagePublisher]"
+					},
+					"windowsImageOffer" : {
+					  "value" : "[variables('vmSettings').windowsImageOffer]"
+					},
+					"windowsImageSKU" : {
+					  "value" : "[variables('vmSettings').windowsImageSKU]"
+					},
+					"vmContainerName" : {
+					  "value" : "[variables('vmSettings').vmContainerName]"
+					},
+					"sqlImagePublisher" : {
+					  "value" : "[variables('vmSettings').sqlImagePublisher]"
+					},
+					"sqlImageOffer" : {
+					  "value" : "[variables('vmSettings').sqlImageOffer]"
+					},
+					"sqlImageSKU" : {
+					  "value" : "[variables('vmSettings').sqlImageSKU]"
+					},
+					"domainName" : {
+					  "value" : "[parameters('domainName')]"
+					},
+					"sqlAOPrepareModulesURL" : {
+					  "value" : "[variables('configuration').sqlAOPrepareModulesURL]"
+					},
+					"sqlAOPrepareConfigurationFunction" : {
+					  "value" : "[variables('configuration').sqlAOPrepareConfigurationFunction]"
+					},
+					"sqlAOEPName" : {
+					  "value" : "[variables('sqlAOEPName')]"
+					},
+					"sqlServerServiceAccountUserName" : {
+					  "value" : "[parameters('sqlServerServiceAccountUserName')]"
+					},
+					"sharePointSetupUserAccountUserName" : {
+					  "value" : "[parameters('sharePointSetupUserAccountUserName')]"
+					},
+					"sqlServerServiceAccountPassword" : {
+					  "value" : "[parameters('sqlServerServiceAccountPassword')]"
+					},
+					"sharePointSetupUserAccountPassword" : {
+					  "value" : "[parameters('sharePointSetupUserAccountPassword')]"
+					},
+					"createClusterModulesURL" : {
+					  "value" : "[variables('configuration').createClusterModulesURL]"
+					},
+					"createClusterConfigurationFunction" : {
+					  "value" : "[variables('configuration').createClusterConfigurationFunction]"
+					},
+					"clusterName" : {
+					  "value" : "[variables('clusterName')]"
+					},
+					"sharePath" : {
+					  "value" : "[variables('sharePath')]"
+					},
+					"sqlAOAGName" : {
+					  "value" : "[variables('sqlAOAGName')]"
+					},
+					"sqlAOListenerName" : {
+					  "value" : "[variables('sqlAOListenerName')]"
+					},
+					"sqlLBName" : {
+					  "value" : "[variables('lbSettings').sqlLBName]"
+					},
+					"sqlLBIPAddress" : {
+					  "value" : "[parameters('sqlLBIPAddress')]"
+					},
+					"adPDCVMName" : {
+					  "value" : "[variables('vmSettings').adPDCVMName]"
+					},
+					"witnessVMSize" : {
+					  "value" : "[parameters('witnessVMSize')]"
+					},
+					"sqlwVMName" : {
+					  "value" : "[variables('vmSettings').sqlwVMName]"
+					},
+					"sqlwNicName" : {
+					  "value" : "[variables('sqlwNicName')]"
+					},
+					"fswModulesURL" : {
+					  "value" : "[variables('configuration').fswModulesURL]"
+					},
+					"fswConfigurationFunction" : {
+					  "value" : "[variables('configuration').fswConfigurationFunction]"
+					}
 				}
 			}
 		},
@@ -1469,7 +1332,7 @@
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
 				"Microsoft.Resources/deployments/UpdatingDNSwithBackupADVM",
-				"Microsoft.Resources/deployments/UpdateSQLWNic"
+				"Microsoft.Resources/deployments/UpdatingSQLWNic"
 			],
 			"properties": {
 				"mode": "Incremental",
@@ -1516,7 +1379,7 @@
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"[concat('Microsoft.Resources/deployments/Update',variables('vmSettings').sqlVMName,'0-nic')]"
+				"[concat('Microsoft.Resources/deployments/Updating',variables('vmSettings').sqlVMName,'0-nic')]"
 			],
 			"properties": {
 				"mode": "Incremental",
