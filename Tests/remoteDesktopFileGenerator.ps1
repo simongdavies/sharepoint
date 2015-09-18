@@ -12,8 +12,9 @@ $file = $folder + '\rdpManagerInput-' + $dsuffix + '.txt'
 
 foreach($rg in $groups)
 {
-    $publicIp = Get-AzureResource -ResourceGroupName $rg.ResourceGroupName -ApiVersion "2015-06-15" -ResourceType Microsoft.Network/publicIpAddresses -Name "rdpIp"
-    $publicIp.Properties.ipAddress >> $file
+    $publicIp = Get-AzureResource -ResourceGroupName $rg.ResourceGroupName -ApiVersion "2015-06-15" -ResourceType Microsoft.Network/publicIpAddresses -Name "rdpIp" 
+    $publicIp
+    #$publicIp.Properties.ipAddress >> $file
 }
 
 

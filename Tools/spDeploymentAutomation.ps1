@@ -5,14 +5,15 @@
 #######################################
 
 # Count of runs
-$count = 5
+$count = 1
 
 # Variables
-$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate-dnsresolution-parallelsp.json"
+#$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"
+$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\azurecon\mainTemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "southeastasia"
-$rgprefix = "T64p"
+$location = "westus"
+$rgprefix = "AC1"
 $premium = $true
 
 # Generate parameter object

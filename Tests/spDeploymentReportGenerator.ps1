@@ -1,6 +1,6 @@
 ﻿Switch-AzureMode -name AzureResourceManager
 #Get all AzureResourceGroups 
-$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T64*" }
+$groups = Get-AzureResourceGroup | where {$_.ResourceGroupName -like "T66*"} | where { $_.Location -like "*" }
 
 $obj = @();
 $obj2 = @();
@@ -38,6 +38,18 @@ foreach($rg in $groups)
             }
         }            
     }
+
+    # Injecting a blank
+    $ob = New-Object -TypeName PSObject
+	$ob | Add-Member -MemberType NoteProperty -Name ResourceGroupName -Value $null -Force
+	$ob | Add-Member -MemberType NoteProperty -Name VMName -Value $null -Force
+	$ob | Add-Member -MemberType NoteProperty -Name VmProvisioningState -Value $null -Force
+    $ob | Add-Member -MemberType NoteProperty -Name ExtensionName -Value $null -Force
+    $ob | Add-Member -MemberType NoteProperty -Name ExtensionStatus -Value $null -Force
+    $ob | Add-Member -MemberType NoteProperty -Name ExtensionMessage -Value $null -Force
+    $ob | Add-Member -MemberType NoteProperty -Name RdpIP -Value $null -Force
+    $ob | Add-Member -MemberType NoteProperty -Name PrivateIp -value $null -Force
+	$obj += $ob
 
     #Write-Progress -Activity "Generating deployment report for $($rg.ResourceGroupName)"
     # Generate report for Deployments

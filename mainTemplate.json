@@ -448,7 +448,7 @@
 			"fswConfigurationFunction":"CreateFileShareWitness.ps1\\CreateFileShareWitness",
 			"sqlAOPrepareModulesURL":"[concat(variables('assetLocation'),'/PrepareAlwaysOnSqlServer.ps1.zip')]",
 			"sqlAOPrepareConfigurationFunction":"PrepareAlwaysOnSqlServer.ps1\\PrepareAlwaysOnSqlServer",
-			"createClusterModulesURL":"[concat(variables('assetLocation'),'/CreateFailoverCluster.ps1.zip')]",
+			"createClusterModulesURL":"[concat(variables('assetLocation'),'/CreateFailoverCluster-nolistener.ps1.zip')]",
 			"createClusterConfigurationFunction":"CreateFailoverCluster.ps1\\CreateFailoverCluster",
 			"spModulesURL":"[concat(variables('assetLocation'),'/ConfigureSharePointServerHA.ps1.zip')]",
 			"spConfigurationFunction":"ConfigureSharePointServerHA.ps1\\ConfigureSharePointServerHA",
@@ -1046,7 +1046,8 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "2.4",
+						"typeHandlerVersion": "2.5",
+						"autoUpgradeMinorVersion": true,
 						"settings": {
 							"modulesURL": "[variables('configuration').adPDCModulesURL]",
 							"configurationFunction": "[variables('configuration').adPDCConfigurationFunction]",
@@ -1160,7 +1161,8 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "2.4",
+						"typeHandlerVersion": "2.5",
+						"autoUpgradeMinorVersion": true,
 						"settings": {
 							"modulesURL": "[variables('configuration').adBDCModulesURL]",
 							"configurationFunction": "[variables('configuration').adBDCConfigurationFunction]",
@@ -1268,7 +1270,8 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.4",
+				"typeHandlerVersion": "2.5",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').sqlAOPrepareModulesURL]",
 					"configurationFunction": "[variables('configuration').sqlAOPrepareConfigurationFunction]",
@@ -1311,7 +1314,8 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.4",
+				"typeHandlerVersion": "2.5",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').createClusterModulesURL]",
 					"configurationFunction": "[variables('configuration').createClusterConfigurationFunction]",
@@ -1425,7 +1429,8 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.4",
+				"typeHandlerVersion": "2.5",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').fswModulesURL]",
 					"configurationFunction": "[variables('configuration').fswConfigurationFunction]",
@@ -1681,7 +1686,8 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.4",
+				"typeHandlerVersion": "2.5",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1735,12 +1741,13 @@
 			"location": "[parameters('location')]",
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'1')]",
-				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').spappVMName,'0/extensions/ConfigureSPAppServer')]"
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spappVMName,'0','/extensions/ConfigureSPAppServer')]"
 			],
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.4",
+				"typeHandlerVersion": "2.5",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1863,7 +1870,8 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.4",
+				"typeHandlerVersion": "2.5",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
@@ -1917,12 +1925,13 @@
 			"location": "[parameters('location')]",
 			"dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName,'1')]",
-				"[concat('Microsoft.Compute/virtualMachines/',variables('vmSettings').spwebVMName,'0/extensions/ConfigureSPWebServer')]"
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmSettings').spwebVMName,'0/extensions/ConfigureSPWebServer')]"
 			],
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.4",
+				"typeHandlerVersion": "2.5",
+				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
 					"configurationFunction": "[variables('configuration').spConfigurationFunction]",
