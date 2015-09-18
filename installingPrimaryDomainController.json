@@ -11,6 +11,9 @@
     "storageAccountNamePrefix": {
       "type": "string"
     },
+    "availabilitySet" : {
+      "type" : "string"
+    },
     "adVMSize" : {
       "type" : "string"
     },
@@ -56,7 +59,7 @@
         "vmSize": "[parameters('adVMSize')]"
       },
       "availabilitySet": {
-        "id": "[reference('CreatingAvailabilitySets').outputs.adAvailabilitySetName.value]"
+        "id": "[parameters('availabilitySet')]"
       },
       "osProfile": {
         "computername": "[parameters('adPDCVMName')]",

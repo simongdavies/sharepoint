@@ -1004,6 +1004,9 @@
 					"storageAccountNamePrefix": {
 					  "value": "[parameters('storageAccountNamePrefix')]"
 					},
+					"availabilitySet" : {
+						"value" : "[reference('CreatingAvailabilitySets').outputs.adAvailabilitySetName.value]"
+					},
 					"adVMSize" : {
 					  "value" : "[parameters('adVMSize')]"
 					},
