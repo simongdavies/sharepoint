@@ -188,7 +188,7 @@
     "dependsOn":[
       "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'0')]",
       "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlwVMName'),'/extensions/CreateFileShareWitness')]",
-      "[concat('Microsoft.Resources/deployments/Updating',parameters('sqlVMName'),'0-nic')]"
+      "[concat('Microsoft.Resources/deployments/UpdatingSQL0Nic')]"
     ],
     "properties": {
       "publisher": "Microsoft.Powershell",
@@ -232,7 +232,7 @@
     "dependsOn":[
       "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'1')]",
       "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlVMName'),'0/extensions/sqlAOPrepare')]",
-      "[concat('Microsoft.Resources/deployments/Updating',parameters('sqlVMName'),'1-nic')]"
+      "[concat('Microsoft.Resources/deployments/UpdatingSQL1Nic')]"
     ],
     "properties": {
       "publisher": "Microsoft.Powershell",
