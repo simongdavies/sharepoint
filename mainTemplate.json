@@ -1046,7 +1046,7 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "2.5",
+						"typeHandlerVersion": "2.6",
 						"autoUpgradeMinorVersion": true,
 						"settings": {
 							"modulesURL": "[variables('configuration').adPDCModulesURL]",
@@ -1161,7 +1161,7 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "2.5",
+						"typeHandlerVersion": "2.6",
 						"autoUpgradeMinorVersion": true,
 						"settings": {
 							"modulesURL": "[variables('configuration').adBDCModulesURL]",
@@ -1270,7 +1270,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.5",
+				"typeHandlerVersion": "2.6",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').sqlAOPrepareModulesURL]",
@@ -1314,7 +1314,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.5",
+				"typeHandlerVersion": "2.6",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').createClusterModulesURL]",
@@ -1429,7 +1429,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.5",
+				"typeHandlerVersion": "2.6",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').fswModulesURL]",
@@ -1686,7 +1686,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.5",
+				"typeHandlerVersion": "2.6",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
@@ -1746,7 +1746,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.5",
+				"typeHandlerVersion": "2.6",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
@@ -1870,7 +1870,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.5",
+				"typeHandlerVersion": "2.6",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
@@ -1930,7 +1930,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "2.5",
+				"typeHandlerVersion": "2.6",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"modulesURL": "[variables('configuration').spModulesURL]",
