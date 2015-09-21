@@ -459,24 +459,35 @@
 			"provisioningBackupDCURL" : "[concat(parameters('baseUrl'),'/provisioningBackupDomainController.json')]",
 			"provisioningSQLAlwaysOnClusterUrl": "[concat(parameters('baseUrl'),'/provisioningSQLAlwaysOnCluster.json')]",
 			"creatingSharepointVMsURL": "[concat(parameters('baseUrl'),'/creatingSharepointVMs.json')]",
-			"provisioningSharepointUrl": "[concat(parameters('baseUrl'),'/provisioningSharepoint.json')]"
+			"provisioningSharepointUrl": "[concat(parameters('baseUrl'),'/provisioningSharepoint.json')]",
+			"creatingStorageAccounts" : "[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
 	},
 	"resources": [
 		{
-			"type": "Microsoft.Storage/storageAccounts",
-			"name": "[concat(parameters('storageAccountNamePrefix'), copyindex())]",
-			"apiVersion": "2015-05-01-preview",
-			"location": "[parameters('location')]",
-			"copy": {
-				"name": "storageAccountLoop",
-				"count": 3
-			},
-			"properties": {
-			"accountType": "[parameters('storageAccountType')]"
-			}
-		},
+			"name": "CreatingStorageAccounts",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').creatingStorageAccounts]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+			    "location": {
+			      "value" : "[parameters('location')]"
+			    },
+			    "storageAccountNamePrefix": {
+			      "value" : "[parameters('storageAccountNamePrefix')]"
+			    },
+			    "storageAccountType" : {
+			      "value" : "[parameters('storageAccountType')]"
+			    }
+        }
+      }
+    },
 		{
 			"apiVersion": "2015-05-01-preview",
 			"type": "Microsoft.Network/publicIPAddresses",
@@ -987,7 +998,7 @@
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '0'))]",
+				"Microsoft.Resources/deployments/CreatingStorageAccounts",
 	      "[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]",
 	      "Microsoft.Resources/deployments/CreatingAvailabilitySets",
 	      "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').rdpLBName)]"
@@ -1074,7 +1085,7 @@
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '0'))]",
+				"Microsoft.Resources/deployments/CreatingStorageAccounts",
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('adBDCNicName'))]",
 				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
 				"Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
@@ -1161,7 +1172,7 @@
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '1'))]",
+				"Microsoft.Resources/deployments/CreatingStorageAccounts",
 	      "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, '0-nic'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, '1-nic'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]",
@@ -1427,7 +1438,7 @@
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts',concat(parameters('storageAccountNamePrefix'), '2'))]",
+				"Microsoft.Resources/deployments/CreatingStorageAccounts",
         "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spappVMName, '0-nic'))]",
 				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spappVMName, '1-nic'))]",
         "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spwebVMName, '0-nic'))]",
