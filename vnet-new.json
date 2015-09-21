@@ -17,7 +17,7 @@
   },
   "resources": [
   {
-    "name": "[variables('virtualNetworkName')]",
+    "name": "[parameters('virtualNetworkName')]",
     "type": "Microsoft.Network/virtualNetworks",
     "location": "[parameters('location')]",
     "apiVersion": "2015-05-01-preview",
@@ -27,7 +27,7 @@
         "[parameters('virtualNetworkAddressRange')]"
       ]
       },
-      "subnets": "[variables('subnets')]"
+      "subnets": "[parameters('subnets')]"
     }
   }
   ]
