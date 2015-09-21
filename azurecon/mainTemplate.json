@@ -464,7 +464,8 @@
 			"creatingStorageAccounts" : "[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
 			"creatingSQLVMsURL": "[concat(parameters('baseUrl'),'/creatingSQLVMs.json')]",
 			"vnetSetupURL": "[concat(parameters('baseUrl'),'/vnet-new.json')]",
-			"setupLBsUrl" : "[concat(parameters('baseUrl'),'/setupLBs.json')]"
+			"setupLBsUrl" : "[concat(parameters('baseUrl'),'/setupLBs.json')]",
+			"creatingNicsUrl" : "[concat(parameters('baseUrl'),'/creatingNICS.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
 	},
@@ -733,211 +734,90 @@
       }
     },
 		{
-			"name": "[variables('adPDCNicName')]",
-			"type": "Microsoft.Network/networkInterfaces",
-			"location": "[parameters('location')]",
-			"dependsOn": [
+			"name": "CreatingNetworkInterfaces",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+			"dependsOn" : [
 				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
-				"Microsoft.Resources/deployments/SettingUpRdp"
-			],
-			"apiVersion": "2015-05-01-preview",
-			"properties": {
-				"ipConfigurations": [
-					{
-						"name": "ipconfig1",
-						"properties": {
-							"privateIPAllocationMethod": "Static",
-							"privateIPAddress" :"[parameters('adPDCNICIPAddress')]",
-							"subnet": {
-								"id": "[variables('staticSubnetRef')]"
-							},
-							"loadBalancerBackendAddressPools": [
-								{
-									"id":"[variables('derivedIds').adBEAddressPoolID]"
-								}
-							],
-							"loadBalancerInboundNatRules": [
-								{
-									"id": "[variables('derivedIds').adRDPNATRuleID]"
-								}
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			"name": "[variables('adBDCNicName')]",
-			"type": "Microsoft.Network/networkInterfaces",
-			"location": "[parameters('location')]",
-			"dependsOn": [
-				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
-				"Microsoft.Resources/deployments/SettingUpRdp"
-			],
-			"apiVersion": "2015-05-01-preview",
-			"properties": {
-				"ipConfigurations": [
-					{
-						"name": "ipconfig1",
-						"properties": {
-							"privateIPAllocationMethod": "Static",
-							"privateIPAddress" :"[parameters('adBDCNICIPAddress')]",
-							"subnet": {
-								"id": "[variables('staticSubnetRef')]"
-							}
-						}
-					}
-				]
-			}
-		},
-		{
-			"name": "[concat(variables('vmSettings').sqlVMName, copyindex(),'-nic')]",
-			"type": "Microsoft.Network/networkInterfaces",
-			"location": "[parameters('location')]",
-			"apiVersion": "2015-05-01-preview",
-			"copy": {
-				"name": "sqlnicLoop",
-				"count": "[variables('vmSettings').noOfSqlVMs]"
-			},
-			"dependsOn": [
-				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
+				"Microsoft.Resources/deployments/SettingUpRdp",
 				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
 			],
-			"properties": {
-				"ipConfigurations": [
-					{
-						"name": "ipconfig1",
-						"properties": {
-							"privateIPAllocationMethod": "Dynamic",
-							"subnet": {
-								"id": "[variables('sqlSubnetRef')]"
-							},
-							"loadBalancerBackendAddressPools": [
-								{
-									"id":"[variables('derivedIds').sqlBEAddressPoolID]"
-								}
-							]
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').creatingNicsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+					"location": {
+						"location": {
+						  "value": "[parameters('location')]"
+						},
+						"adPDCNicName": {
+						  "value": "[variables('adPDCNicName')]"
+						},
+						"adPDCNICIPAddress": {
+						  "value": "[parameters('adPDCNICIPAddress')]"
+						},
+						"staticSubnetRef": {
+						  "value": "[variables('staticSubnetRef')]"
+						},
+						"adBEAddressPoolID": {
+						  "value": "[variables('derivedIds').adBEAddressPoolID]"
+						},
+						"adRDPNATRuleID": {
+						  "value": "[variables('derivedIds').adRDPNATRuleID]"
+						},
+						"adBDCNicName": {
+						  "value": "[variables('adBDCNicName')]"
+						},
+						"adBDCNICIPAddress": {
+						  "value": "[parameters('adBDCNICIPAddress')]"
+						},
+						"sqlVMName": {
+						  "value": "[variables('vmSettings').sqlVMName]"
+						},
+						"sqlSubnetRef": {
+						  "value": "[variables('sqlSubnetRef')]"
+						},
+						"sqlBEAddressPoolID": {
+						  "value": "[variables('derivedIds').sqlBEAddressPoolID]"
+						},
+						"spwebVMName": {
+						  "value": "[variables('vmSettings').spwebVMName]"
+						},
+						"spWebSubnetRef": {
+						  "value": "[variables('spWebSubnetRef')]"
+						},
+						"spWebBEAddressPoolID": {
+						  "value": "[variables('derivedIds').spWebBEAddressPoolID]"
+						},
+						"spappVMName": {
+						  "value": "[variables('vmSettings').spappVMName]"
+						},
+						"spAppSubnetRef": {
+						  "value": "[variables('spAppSubnetRef')]"
+						},
+						"spCABEAddressPoolID": {
+						  "value": "[variables('derivedIds').spCABEAddressPoolID]"
+						},
+						"spCANATRuleID": {
+						  "value": "[variables('derivedIds').spCANATRuleID]"
+						},
+						"sqlwNicName": {
+						  "value": "[variables('sqlwNicName')]"
 						}
 					}
-				]
-			}
-		},
-		{
-			"name": "[concat(variables('vmSettings').spwebVMName, copyindex(),'-nic')]",
-			"type": "Microsoft.Network/networkInterfaces",
-			"location": "[parameters('location')]",
-			"apiVersion": "2015-05-01-preview",
-			"copy": {
-				"name": "spWebnicLoop",
-				"count": "[variables('vmSettings').noOfspRoleVMs]"
-			},
-			"dependsOn": [
-				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
-				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
-			],
-			"properties": {
-				"ipConfigurations": [
-					{
-						"name": "ipconfig1",
-						"properties": {
-							"privateIPAllocationMethod": "Dynamic",
-							"subnet": {
-								"id": "[variables('spWebSubnetRef')]"
-							},
-							"loadBalancerBackendAddressPools": [
-								{
-									"id":"[variables('derivedIds').spWebBEAddressPoolID]"
-								}
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			"name": "[concat(variables('vmSettings').spappVMName,'0-nic')]",
-			"type": "Microsoft.Network/networkInterfaces",
-			"location": "[parameters('location')]",
-			"apiVersion": "2015-05-01-preview",
-			"dependsOn": [
-				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
-				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
-			],
-			"properties": {
-				"ipConfigurations": [
-					{
-						"name": "ipconfig1",
-						"properties": {
-							"privateIPAllocationMethod": "Dynamic",
-							"subnet": {
-								"id": "[variables('spAppSubnetRef')]"
-							},
-							"loadBalancerBackendAddressPools": [
-								{
-									"id":"[variables('derivedIds').spCABEAddressPoolID]"
-								}
-							],
-							"loadBalancerInboundNatRules": [
-								{
-									"id": "[variables('derivedIds').spCANATRuleID]"
-								}
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			"name": "[concat(variables('vmSettings').spappVMName,'1-nic')]",
-			"type": "Microsoft.Network/networkInterfaces",
-			"location": "[parameters('location')]",
-			"apiVersion": "2015-05-01-preview",
-			"dependsOn": [
-				"Microsoft.Resources/deployments/CreatingVirtualNetwork"
-			],
-			"properties": {
-				"ipConfigurations": [
-					{
-						"name": "ipconfig1",
-						"properties": {
-							"privateIPAllocationMethod": "Dynamic",
-							"subnet": {
-								"id": "[variables('spAppSubnetRef')]"
-							}
-						}
-					}
-				]
-			}
-		},
-		{
-			"name": "[variables('sqlwNicName')]",
-			"type": "Microsoft.Network/networkInterfaces",
-			"location": "[parameters('location')]",
-			"dependsOn": [
-				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
-			],
-			"apiVersion": "2015-05-01-preview",
-			"properties": {
-				"ipConfigurations": [
-					{
-						"name": "ipconfig1",
-						"properties": {
-							"privateIPAllocationMethod": "Dynamic",
-							"subnet": {
-								"id": "[variables('sqlSubnetRef')]"
-							}
-						}
-					}
-				]
-			}
-		},
+        }
+      }
+    },
 		{
 			"name" : "ProvisioningPrimaryADDomainController",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
 				"Microsoft.Resources/deployments/CreatingStorageAccounts",
-	      "[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]",
+				"Microsoft.Resources/deployments/CreatingNetworkInterfaces",
 	      "Microsoft.Resources/deployments/CreatingAvailabilitySets",
 	      "Microsoft.Resources/deployments/SettingUpRdp"
 			],
@@ -1024,7 +904,7 @@
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
 				"Microsoft.Resources/deployments/CreatingStorageAccounts",
-				"[resourceId('Microsoft.Network/networkInterfaces',variables('adBDCNicName'))]",
+				"Microsoft.Resources/deployments/CreatingNetworkInterfaces",
 				"Microsoft.Resources/deployments/CreatingAvailabilitySets",
 				"Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
 			],
@@ -1111,9 +991,7 @@
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
 				"Microsoft.Resources/deployments/CreatingStorageAccounts",
-	      "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, '0-nic'))]",
-				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').sqlVMName, '1-nic'))]",
-				"[resourceId('Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]",
+	      "Microsoft.Resources/deployments/CreatingNetworkInterfaces",
 	      "Microsoft.Resources/deployments/CreatingAvailabilitySets",
 	      "Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
 			],
@@ -1503,10 +1381,7 @@
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
 				"Microsoft.Resources/deployments/CreatingStorageAccounts",
-        "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spappVMName, '0-nic'))]",
-				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spappVMName, '1-nic'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spwebVMName, '0-nic'))]",
-				"[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmSettings').spwebVMName, '1-nic'))]",
+        "Microsoft.Resources/deployments/CreatingNetworkInterfaces",
         "Microsoft.Resources/deployments/CreatingAvailabilitySets",
         "Microsoft.Resources/deployments/UpdatingDNSwithBackupADVM"
 			],
