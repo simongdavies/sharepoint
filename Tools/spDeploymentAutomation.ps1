@@ -5,7 +5,7 @@
 #######################################
 
 # Count of runs
-$count = 3
+$count = 1
 
 # Variables
 #$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"

@@ -462,7 +462,8 @@
 			"creatingSharepointVMsURL": "[concat(parameters('baseUrl'),'/creatingSharepointVMs.json')]",
 			"provisioningSharepointUrl": "[concat(parameters('baseUrl'),'/provisioningSharepoint.json')]",
 			"creatingStorageAccounts" : "[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
-			"creatingSQLVMsURL": "[concat(parameters('baseUrl'),'/creatingSQLVMs.json')]"
+			"creatingSQLVMsURL": "[concat(parameters('baseUrl'),'/creatingSQLVMs.json')]",
+			"vnetSetupURL": "[concat(parameters('baseUrl'),'/vnet-new.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
 	},
@@ -613,17 +614,29 @@
 			}
 		},
 		{
-			"name": "[variables('virtualNetworkName')]",
-			"type": "Microsoft.Network/virtualNetworks",
-			"location": "[parameters('location')]",
-			"apiVersion": "2015-05-01-preview",
-			"properties": {
-				"addressSpace": {
-				"addressPrefixes": [
-					"[parameters('virtualNetworkAddressRange')]"
-				]
+			"name" : "CreatingVirtualNetwork",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2015-01-01",
+			"properties" : {
+				"mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').vnetSetupURL]",
+          "contentVersion": "1.0.0.0"
 				},
-				"subnets": "[variables('subnets')]"
+				"parameters" : {
+					"location": {
+			      "value": "[parameters('location')]"
+			    },
+			    "virtualNetworkName": {
+			      "value": "[variables('virtualNetworkName')]"
+			    },
+			    "virtualNetworkAddressRange": {
+			      "value": "[parameters('virtualNetworkAddressRange')]"
+			    },
+			    "subnets": {
+			      "value": "[variables('subnets')]"
+			    }
+				}
 			}
 		},
 		{
@@ -691,7 +704,7 @@
 			"type": "Microsoft.Network/loadBalancers",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]"
+				"Microsoft.Resources/deployments/CreatingVirtualNetwork"
 			],
 			"properties": {
 				"frontendIPConfigurations": [
@@ -787,7 +800,7 @@
 			"type": "Microsoft.Network/networkInterfaces",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"[variables('virtualNetworkName')]",
+				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
 				"Microsoft.Resources/deployments/SettingUpRdp"
 			],
 			"apiVersion": "2015-05-01-preview",
@@ -849,7 +862,7 @@
 				"count": "[variables('vmSettings').noOfSqlVMs]"
 			},
 			"dependsOn": [
-				"[variables('virtualNetworkName')]",
+				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
 				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').sqlLBName)]"
 			],
 			"properties": {
@@ -881,7 +894,7 @@
 				"count": "[variables('vmSettings').noOfspRoleVMs]"
 			},
 			"dependsOn": [
-				"[variables('virtualNetworkName')]",
+				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
 				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').spWebLBName)]"
 			],
 			"properties": {
@@ -909,7 +922,7 @@
 			"location": "[parameters('location')]",
 			"apiVersion": "2015-05-01-preview",
 			"dependsOn": [
-				"[variables('virtualNetworkName')]",
+				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
 				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').spCALBName)]"
 			],
 			"properties": {
@@ -942,7 +955,7 @@
 			"location": "[parameters('location')]",
 			"apiVersion": "2015-05-01-preview",
 			"dependsOn": [
-				"[variables('virtualNetworkName')]"
+				"Microsoft.Resources/deployments/CreatingVirtualNetwork"
 			],
 			"properties": {
 				"ipConfigurations": [
