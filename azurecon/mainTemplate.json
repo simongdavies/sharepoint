@@ -461,7 +461,8 @@
 			"provisioningSQLAlwaysOnClusterUrl": "[concat(parameters('baseUrl'),'/provisioningSQLAlwaysOnCluster.json')]",
 			"creatingSharepointVMsURL": "[concat(parameters('baseUrl'),'/creatingSharepointVMs.json')]",
 			"provisioningSharepointUrl": "[concat(parameters('baseUrl'),'/provisioningSharepoint.json')]",
-			"creatingStorageAccounts" : "[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]"
+			"creatingStorageAccounts" : "[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
+			"creatingSQLVMsURL": "[concat(parameters('baseUrl'),'/creatingSQLVMs.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
 	},
@@ -1154,7 +1155,7 @@
 			}
 		},
 		{
-			"name" : "ProvisioningSQLAlwaysOnCluster",
+			"name" : "CreatingSQLVirtualMachines",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
@@ -1164,6 +1165,132 @@
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]",
 	      "Microsoft.Resources/deployments/CreatingAvailabilitySets",
 	      "Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
+			],
+			"properties" : {
+				"mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').creatingSQLVMsURL]",
+          "contentVersion": "1.0.0.0"
+				},
+				"parameters" : {
+					"sqlVMName": {
+					  "value": "[variables('vmSettings').sqlVMName]"
+					},
+					"location": {
+					  "value": "[parameters('location')]"
+					},
+					"storageAccountNamePrefix": {
+					  "value": "[parameters('storageAccountNamePrefix')]"
+					},
+					"availabilitySet" : {
+					  "value" : "[reference('CreatingAvailabilitySets').outputs.sqlAvailabilitySetName.value]"
+					},
+					"sqlVMSize" : {
+					  "value" : "[parameters('sqlVMSize')]"
+					},
+					"adminUsername" : {
+					  "value" : "[parameters('adminUsername')]"
+					},
+					"adminPassword" : {
+					  "value" : "[parameters('adminPassword')]"
+					},
+					"windowsImagePublisher" : {
+					  "value" : "[variables('vmSettings').windowsImagePublisher]"
+					},
+					"windowsImageOffer" : {
+					  "value" : "[variables('vmSettings').windowsImageOffer]"
+					},
+					"windowsImageSKU" : {
+					  "value" : "[variables('vmSettings').windowsImageSKU]"
+					},
+					"vmContainerName" : {
+					  "value" : "[variables('vmSettings').vmContainerName]"
+					},
+					"sqlImagePublisher" : {
+					  "value" : "[variables('vmSettings').sqlImagePublisher]"
+					},
+					"sqlImageOffer" : {
+					  "value" : "[variables('vmSettings').sqlImageOffer]"
+					},
+					"sqlImageSKU" : {
+					  "value" : "[variables('vmSettings').sqlImageSKU]"
+					},
+					"domainName" : {
+					  "value" : "[parameters('domainName')]"
+					},
+					"sqlAOPrepareModulesURL" : {
+					  "value" : "[variables('configuration').sqlAOPrepareModulesURL]"
+					},
+					"sqlAOPrepareConfigurationFunction" : {
+					  "value" : "[variables('configuration').sqlAOPrepareConfigurationFunction]"
+					},
+					"sqlAOEPName" : {
+					  "value" : "[variables('sqlAOEPName')]"
+					},
+					"sqlServerServiceAccountUserName" : {
+					  "value" : "[parameters('sqlServerServiceAccountUserName')]"
+					},
+					"sharePointSetupUserAccountUserName" : {
+					  "value" : "[parameters('sharePointSetupUserAccountUserName')]"
+					},
+					"sqlServerServiceAccountPassword" : {
+					  "value" : "[parameters('sqlServerServiceAccountPassword')]"
+					},
+					"sharePointSetupUserAccountPassword" : {
+					  "value" : "[parameters('sharePointSetupUserAccountPassword')]"
+					},
+					"createClusterModulesURL" : {
+					  "value" : "[variables('configuration').createClusterModulesURL]"
+					},
+					"createClusterConfigurationFunction" : {
+					  "value" : "[variables('configuration').createClusterConfigurationFunction]"
+					},
+					"clusterName" : {
+					  "value" : "[variables('clusterName')]"
+					},
+					"sharePath" : {
+					  "value" : "[variables('sharePath')]"
+					},
+					"sqlAOAGName" : {
+					  "value" : "[variables('sqlAOAGName')]"
+					},
+					"sqlAOListenerName" : {
+					  "value" : "[variables('sqlAOListenerName')]"
+					},
+					"sqlLBName" : {
+					  "value" : "[variables('lbSettings').sqlLBName]"
+					},
+					"sqlLBIPAddress" : {
+					  "value" : "[parameters('sqlLBIPAddress')]"
+					},
+					"adPDCVMName" : {
+					  "value" : "[variables('vmSettings').adPDCVMName]"
+					},
+					"witnessVMSize" : {
+					  "value" : "[parameters('witnessVMSize')]"
+					},
+					"sqlwVMName" : {
+					  "value" : "[variables('vmSettings').sqlwVMName]"
+					},
+					"sqlwNicName" : {
+					  "value" : "[variables('sqlwNicName')]"
+					},
+					"fswModulesURL" : {
+					  "value" : "[variables('configuration').fswModulesURL]"
+					},
+					"fswConfigurationFunction" : {
+					  "value" : "[variables('configuration').fswConfigurationFunction]"
+					}
+				}
+			}
+		},
+		{
+			"name" : "ProvisioningSQLAlwaysOnCluster",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2015-01-01",
+			"dependsOn": [
+	      "Microsoft.Resources/deployments/UpdatingDNSwithBackupADVM",
+				"Microsoft.Resources/deployments/CreatingSQLVirtualMachines"
 			],
 			"properties" : {
 				"mode": "Incremental",
