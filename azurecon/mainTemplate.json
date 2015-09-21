@@ -1483,7 +1483,7 @@
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2015-01-01",
 			"dependsOn": [
-				"Microsoft.Resources/deployments/CreatingSQLAlwaysOnCluster",
+				"Microsoft.Resources/deployments/ProvisioningSQLAlwaysOnCluster",
 				"Microsoft.Resources/deployments/CreatingSharepointVirtualMachines"
 			],
 			"properties" : {
