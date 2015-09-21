@@ -1471,6 +1471,9 @@
 					},
 					"vmContainerName" : {
 					  "value" : "[variables('vmSettings').vmContainerName]"
+					},
+					"storageAccountNamePrefix" : {
+						"value" : "[parameters('storageAccountNamePrefix')]"
 					}
 				}
 			}

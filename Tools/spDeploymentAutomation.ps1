@@ -5,7 +5,7 @@
 #######################################
 
 # Count of runs
-$count = 1
+$count = 3
 
 # Variables
 #$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"
@@ -13,7 +13,7 @@ $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\azurecon\mainTemplate
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "AC6"
+$rgprefix = "AC7"
 $premium = $true
 
 # Generate parameter object

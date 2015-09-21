@@ -34,6 +34,9 @@
     },
     "vmContainerName" : {
       "type" : "string"
+    },
+    "storageAccountNamePrefix" : {
+      "type" : "string"
     }
   },
   "resources": [
