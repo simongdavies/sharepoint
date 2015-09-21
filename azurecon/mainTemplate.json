@@ -463,7 +463,8 @@
 			"provisioningSharepointUrl": "[concat(parameters('baseUrl'),'/provisioningSharepoint.json')]",
 			"creatingStorageAccounts" : "[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
 			"creatingSQLVMsURL": "[concat(parameters('baseUrl'),'/creatingSQLVMs.json')]",
-			"vnetSetupURL": "[concat(parameters('baseUrl'),'/vnet-new.json')]"
+			"vnetSetupURL": "[concat(parameters('baseUrl'),'/vnet-new.json')]",
+			"setupLBsUrl" : "[concat(parameters('baseUrl'),'/setupLBs.json')]"
 		},
 		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
 	},
@@ -640,161 +641,97 @@
 			}
 		},
 		{
-			"apiVersion": "2015-05-01-preview",
-			"name": "[variables('lbSettings').spWebLBName]",
-			"type": "Microsoft.Network/loadBalancers",
-			"location": "[parameters('location')]",
-			"dependsOn": [
+			"name": "SettingUpLoadBalancers",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+			"dependsOn" : [
+				"Microsoft.Resources/deployments/SettingUpSharepointCentralAdminPublicIP",
 				"Microsoft.Resources/deployments/SettingUpSharepointWebPublicIP",
-				"Microsoft.Resources/deployments/SettingUpRdp"
-			],
-			"properties": {
-				"frontendIPConfigurations": [
-					{
-						"name": "[variables('lbSettings').spWebLBFE]",
-						"properties": {
-							"publicIPAddress": {
-								"id": "[reference('SettingUpSharepointWebPublicIP').outputs.resourceId.value]"
-							}
-						}
-					}
-				],
-				"backendAddressPools": [
-					{
-						"name": "[variables('lbSettings').spWebLBBE]"
-					}
-				],
-				"loadBalancingRules": [
-					{
-						"name": "[variables('lbSettings').spWebLB]",
-						"properties": {
-						"frontendIPConfiguration": {
-							"id": "[variables('derivedIds').spWebLBFEConfigID]"
-						},
-						"backendAddressPool": {
-							"id": "[variables('derivedIds').spWebBEAddressPoolID]"
-						},
-						"probe": {
-							"id": "[variables('derivedIds').spWebProbeID]"
-						},
-						"protocol": "tcp",
-						"frontendPort": 80,
-						"backendPort": 80,
-						"enableFloatingIP": false
-						}
-					}
-				],
-				"probes": [
-					{
-						"name": "[variables('spWebProbe')]",
-						"properties": {
-							"protocol": "http",
-							"port": "[variables('spWebProbePort')]",
-							"intervalInSeconds": "15",
-							"numberOfProbes": "5",
-							"requestPath":"/iisstart.htm"
-						}
-					}
-				]
-			}
-		},
-		{
-			"apiVersion": "2015-05-01-preview",
-			"name": "[variables('lbSettings').sqlLBName]",
-			"type": "Microsoft.Network/loadBalancers",
-			"location": "[parameters('location')]",
-			"dependsOn": [
+				"Microsoft.Resources/deployments/SettingUpRdp",
 				"Microsoft.Resources/deployments/CreatingVirtualNetwork"
 			],
-			"properties": {
-				"frontendIPConfigurations": [
-					{
-						"name": "[variables('lbSettings').sqlLBFE]",
-						"properties": {
-							"privateIPAllocationMethod": "Static",
-							"privateIPAddress" :"[parameters('sqlLBIPAddress')]",
-							"subnet": {
-								"id": "[variables('staticSubnetRef')]"
-							}
-						}
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').setupLBsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+					"location": {
+					  "value": "[parameters('location')]"
+					},
+					"spCALBName": {
+					  "value": "[variables('lbSettings').spCALBName]"
+					},
+					"spCALBFE": {
+					  "value": "[variables('lbSettings').spCALBFE]"
+					},
+					"spCAResourceId": {
+					  "value": "[reference('SettingUpSharepointCentralAdminPublicIP').outputs.resourceId.value]"
+					},
+					"spCALBBE": {
+					  "value": "[variables('lbSettings').spCALBBE]"
+					},
+					"spCANAT": {
+					  "value": "[variables('spCANAT')]"
+					},
+					"spCAlbFEConfigID": {
+					  "value": "[variables('derivedIds').spCAlbFEConfigID]"
+					},
+					"spWebLBName": {
+					  "value": "[variables('lbSettings').spWebLBName]"
+					},
+					"spWebLBFE": {
+					  "value": "[variables('lbSettings').spWebLBFE]"
+					},
+					"spWebResourceId": {
+					  "value": "[reference('SettingUpSharepointWebPublicIP').outputs.resourceId.value]"
+					},
+					"spWebLBBE": {
+					  "value": "[variables('lbSettings').spWebLBBE]"
+					},
+					"spWebLB": {
+					  "value": "[variables('lbSettings').spWebLB]"
+					},
+					"spWebLBFEConfigID": {
+					  "value": "[variables('derivedIds').spWebLBFEConfigID]"
+					},
+					"spWebBEAddressPoolID": {
+					  "value": "[variables('derivedIds').spWebBEAddressPoolID]"
+					},
+					"spWebProbeID": {
+					  "value": "[variables('derivedIds').spWebProbeID]"
+					},
+					"spWebProbe": {
+					  "value": "[variables('spWebProbe')]"
+					},
+					"sqlLBName": {
+					  "value": "[variables('lbSettings').sqlLBName]"
+					},
+					"sqlLBFE" : {
+					  "value" : "[variables('lbSettings').sqlLBFE]"
+					},
+					"sqlLBIPAddress" : {
+					  "value" : "[parameters('sqlLBIPAddress')]"
+					},
+					"staticSubnetRef" : {
+					  "value" : "[variables('staticSubnetRef')]"
+					},
+					"sqlLBBE" : {
+					  "value" : "[variables('lbSettings').sqlLBBE]"
+					},
+					"sqllbFEConfigID" : {
+					  "value" : "[variables('derivedIds').sqllbFEConfigID]"
+					},
+					"sqllbProbeID" : {
+					  "value" : "[variables('derivedIds').sqllbProbeID]"
+					},
+					"SQLAOProbe" : {
+					  "value" : "[variables('SQLAOProbe')]"
 					}
-				],
-				"backendAddressPools": [
-					{
-						"name": "[variables('lbSettings').sqlLBBE]"
-					}
-				],
-				"loadBalancingRules": [
-					{
-						"name": "SQLAlwaysOnEndPointListener",
-						"properties": {
-						"frontendIPConfiguration": {
-							"id": "[variables('derivedIds').sqllbFEConfigID]"
-						},
-						"probe": {
-							"id": "[variables('derivedIds').sqllbProbeID]"
-						},
-						"protocol": "tcp",
-						"frontendPort": 1433,
-						"backendPort": 1433,
-						"enableFloatingIP": true
-						}
-					}
-				],
-				"probes": [
-					{
-						"name": "[variables('SQLAOProbe')]",
-						"properties": {
-							"protocol": "tcp",
-							"port": 59999,
-							"intervalInSeconds": "5",
-							"numberOfProbes": "2"
-						}
-					}
-				]
-			}
-		},
-		{
-			"apiVersion": "2015-05-01-preview",
-			"name": "[variables('lbSettings').spCALBName]",
-			"type": "Microsoft.Network/loadBalancers",
-			"location": "[parameters('location')]",
-			"dependsOn": [
-				"Microsoft.Resources/deployments/SettingUpSharepointCentralAdminPublicIP"
-			],
-			"properties": {
-				"frontendIPConfigurations": [
-					{
-						"name": "[variables('lbSettings').spCALBFE]",
-						"properties": {
-							"publicIPAddress": {
-								"id": "[reference('SettingUpSharepointCentralAdminPublicIP').outputs.resourceId.value]"
-							}
-						}
-					}
-				],
-				"backendAddressPools": [
-					{
-						"name": "[variables('lbSettings').spCALBBE]"
-
-					}
-				],
-				"inboundNatRules": [
-					{
-						"name": "[variables('spCANAT')]",
-						"properties": {
-							"frontendIPConfiguration": {
-								"id": "[variables('derivedIds').spCAlbFEConfigID]"
-							},
-							"protocol": "tcp",
-							"frontendPort": 80,
-							"backendPort": 80,
-							"enableFloatingIP": false
-						}
-					}
-				]
-			}
-		},
+        }
+      }
+    },
 		{
 			"name": "[variables('adPDCNicName')]",
 			"type": "Microsoft.Network/networkInterfaces",
@@ -864,7 +801,7 @@
 			},
 			"dependsOn": [
 				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
-				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').sqlLBName)]"
+				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
 			],
 			"properties": {
 				"ipConfigurations": [
@@ -896,7 +833,7 @@
 			},
 			"dependsOn": [
 				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
-				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').spWebLBName)]"
+				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
 			],
 			"properties": {
 				"ipConfigurations": [
@@ -924,7 +861,7 @@
 			"apiVersion": "2015-05-01-preview",
 			"dependsOn": [
 				"Microsoft.Resources/deployments/CreatingVirtualNetwork",
-				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').spCALBName)]"
+				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
 			],
 			"properties": {
 				"ipConfigurations": [
@@ -977,7 +914,7 @@
 			"type": "Microsoft.Network/networkInterfaces",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').sqlLBName)]"
+				"Microsoft.Resources/deployments/SettingUpLoadBalancers"
 			],
 			"apiVersion": "2015-05-01-preview",
 			"properties": {
