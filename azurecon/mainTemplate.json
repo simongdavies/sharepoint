@@ -750,63 +750,61 @@
         },
         "parameters": {
 					"location": {
-						"location": {
-						  "value": "[parameters('location')]"
-						},
-						"adPDCNicName": {
-						  "value": "[variables('adPDCNicName')]"
-						},
-						"adPDCNICIPAddress": {
-						  "value": "[parameters('adPDCNICIPAddress')]"
-						},
-						"staticSubnetRef": {
-						  "value": "[variables('staticSubnetRef')]"
-						},
-						"adBEAddressPoolID": {
-						  "value": "[variables('derivedIds').adBEAddressPoolID]"
-						},
-						"adRDPNATRuleID": {
-						  "value": "[variables('derivedIds').adRDPNATRuleID]"
-						},
-						"adBDCNicName": {
-						  "value": "[variables('adBDCNicName')]"
-						},
-						"adBDCNICIPAddress": {
-						  "value": "[parameters('adBDCNICIPAddress')]"
-						},
-						"sqlVMName": {
-						  "value": "[variables('vmSettings').sqlVMName]"
-						},
-						"sqlSubnetRef": {
-						  "value": "[variables('sqlSubnetRef')]"
-						},
-						"sqlBEAddressPoolID": {
-						  "value": "[variables('derivedIds').sqlBEAddressPoolID]"
-						},
-						"spwebVMName": {
-						  "value": "[variables('vmSettings').spwebVMName]"
-						},
-						"spWebSubnetRef": {
-						  "value": "[variables('spWebSubnetRef')]"
-						},
-						"spWebBEAddressPoolID": {
-						  "value": "[variables('derivedIds').spWebBEAddressPoolID]"
-						},
-						"spappVMName": {
-						  "value": "[variables('vmSettings').spappVMName]"
-						},
-						"spAppSubnetRef": {
-						  "value": "[variables('spAppSubnetRef')]"
-						},
-						"spCABEAddressPoolID": {
-						  "value": "[variables('derivedIds').spCABEAddressPoolID]"
-						},
-						"spCANATRuleID": {
-						  "value": "[variables('derivedIds').spCANATRuleID]"
-						},
-						"sqlwNicName": {
-						  "value": "[variables('sqlwNicName')]"
-						}
+						"value": "[parameters('location')]"
+					},
+					"adPDCNicName": {
+						"value": "[variables('adPDCNicName')]"
+					},
+					"adPDCNICIPAddress": {
+						"value": "[parameters('adPDCNICIPAddress')]"
+					},
+					"staticSubnetRef": {
+						"value": "[variables('staticSubnetRef')]"
+					},
+					"adBEAddressPoolID": {
+						"value": "[variables('derivedIds').adBEAddressPoolID]"
+					},
+					"adRDPNATRuleID": {
+						"value": "[variables('derivedIds').adRDPNATRuleID]"
+					},
+					"adBDCNicName": {
+						"value": "[variables('adBDCNicName')]"
+					},
+					"adBDCNICIPAddress": {
+						"value": "[parameters('adBDCNICIPAddress')]"
+					},
+					"sqlVMName": {
+						"value": "[variables('vmSettings').sqlVMName]"
+					},
+					"sqlSubnetRef": {
+						"value": "[variables('sqlSubnetRef')]"
+					},
+					"sqlBEAddressPoolID": {
+						"value": "[variables('derivedIds').sqlBEAddressPoolID]"
+					},
+					"spwebVMName": {
+						"value": "[variables('vmSettings').spwebVMName]"
+					},
+					"spWebSubnetRef": {
+						"value": "[variables('spWebSubnetRef')]"
+					},
+					"spWebBEAddressPoolID": {
+						"value": "[variables('derivedIds').spWebBEAddressPoolID]"
+					},
+					"spappVMName": {
+						"value": "[variables('vmSettings').spappVMName]"
+					},
+					"spAppSubnetRef": {
+						"value": "[variables('spAppSubnetRef')]"
+					},
+					"spCABEAddressPoolID": {
+						"value": "[variables('derivedIds').spCABEAddressPoolID]"
+					},
+					"spCANATRuleID": {
+						"value": "[variables('derivedIds').spCANATRuleID]"
+					},
+					"sqlwNicName": {
+						"value": "[variables('sqlwNicName')]"
 					}
         }
       }

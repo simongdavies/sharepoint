@@ -350,11 +350,12 @@
 		"spConfigurationFunction": "ConfigureSharePointServer.ps1\\ConfigureSharePointServer",
 		"spPublicIPLBSetupURL" : "[concat(parameters('baseUrl'),'/spvmpublicip-',parameters('spPublicIPNewOrExisting'),'.json')]",
 		"dscTemplateUri" : "[concat(parameters('baseUrl'),'/dscResource.json')]",
-		"storageAccountSetupURL" : "[concat(parameters('baseUrl'),'/storageAccount-',parameters('storageAccountNewOrExisting'),'.json')]"
+		"storageAccountSetupURL" : "[concat(parameters('baseUrl'),'/storageAccount-',parameters('storageAccountNewOrExisting'),'.json')]",
+		"creatingPublicIPsUrl" : "[concat(parameters('baseUrl'),'/creatingPublicIPs.json')]"
 	},
 	"resources": [
 		{
-			"name": "storageAcountSetup",
+			"name": "SettingUpStorageAccount",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion" : "2015-01-01",
 			"properties" : {
@@ -380,21 +381,29 @@
 			}
 		},
 		{
-			"apiVersion": "2015-05-01-preview",
-			"type": "Microsoft.Network/publicIPAddresses",
-			"name": "[variables('adpublicIPAddressName')]",
-			"location": "[parameters('location')]",
-			"properties": {
-				"publicIPAllocationMethod": "[variables('publicIPAddressType')]"
-			}
-		},
-		{
-			"apiVersion": "2015-05-01-preview",
-			"type": "Microsoft.Network/publicIPAddresses",
-			"name": "[variables('sqlpublicIPAddressName')]",
-			"location": "[parameters('location')]",
-			"properties": {
-				"publicIPAllocationMethod": "[variables('publicIPAddressType')]"
+			"name": "SettingUpPublicIPs",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion" : "2015-01-01",
+			"properties" : {
+				"mode": "Incremental",
+				"templateLink" : {
+					"uri" : "[variables('creatingPublicIPsUrl')]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters" : {
+					"location": {
+			      "value": "[parameters('location')]"
+			    },
+			    "adpublicIPAddressName" : {
+			      "type" : "[variables('adpublicIPAddressName')]"
+			    },
+			    "sqlpublicIPAddressName" : {
+			      "type" : "[variables('sqlpublicIPAddressName')]"
+			    },
+			    "publicIPAddressType" : {
+			      "type" : "[variables('publicIPAddressType')]"
+			    }
+				}
 			}
 		},
 		{
@@ -662,7 +671,7 @@
 			"name": "[variables('adVMName')]",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"storageAcountSetup",
+				"SettingUpStorageAccount",
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('adNicName'))]",
 				"[resourceId('Microsoft.Compute/availabilitySets', variables('adAvailabilitySetName'))]",
 				"[resourceId('Microsoft.Network/loadBalancers',variables('adlbName'))]"
@@ -788,7 +797,7 @@
 			"name": "[variables('sqlVMName')]",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"storageAcountSetup",
+				"SettingUpStorageAccount",
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('sqlNicName'))]",
 				"[resourceId('Microsoft.Compute/availabilitySets', variables('sqlAvailabilitySetName'))]",
 				"Microsoft.Resources/deployments/UpdateVNetDNS"
@@ -899,7 +908,7 @@
 			"name": "[variables('spVMName')]",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"storageAcountSetup",
+				"SettingUpStorageAccount",
 				"[resourceId('Microsoft.Network/networkInterfaces',variables('spNicName'))]",
 				"[resourceId('Microsoft.Compute/availabilitySets', variables('spAvailabilitySetName'))]",
 				"Microsoft.Resources/deployments/UpdateVNetDNS",
