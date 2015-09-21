@@ -454,6 +454,7 @@
 			"spConfigurationFunction":"ConfigureSharePointServerHA.ps1\\ConfigureSharePointServerHA",
 			"spWebIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spWebIPNewOrExisting'),'.json')]",
 			"spCAIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-',parameters('spCAIPNewOrExisting'),'.json')]",
+			"rdpIPAdressSetupURL" : "[concat(parameters('baseUrl'),'/publicip-rdp.json')]",
 			"availabilitySetSetupURL" : "[concat(parameters('baseUrl'),'/availabilitySets.json')]",
 			"provisioningPrimaryDCURL" : "[concat(parameters('baseUrl'),'/provisioningPrimaryDomainController.json')]",
 			"provisioningBackupDCURL" : "[concat(parameters('baseUrl'),'/provisioningBackupDomainController.json')]",
@@ -489,14 +490,40 @@
       }
     },
 		{
-			"apiVersion": "2015-05-01-preview",
-			"type": "Microsoft.Network/publicIPAddresses",
-			"name": "[variables('rdpIPAddressName')]",
-			"location": "[parameters('location')]",
-			"properties": {
-				"publicIPAllocationMethod": "Dynamic"
-			}
-		},
+			"name": "SettingUpRdp",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').rdpIPAdressSetupURL]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+					"location": {
+			      "value": "[parameters('location')]"
+			    },
+			    "rdpIPAddressName": {
+			      "value": "[variables('rdpIPAddressName')]"
+			    },
+			    "rdpLBName": {
+			      "value": "[variables('lbSettings').rdpLBName]"
+			    },
+			    "rdpLBFE" : {
+			      "value": "[variables('lbSettings').rdpLBFE]"
+			    },
+			    "adLBBE" : {
+			      "value": "[variables('lbSettings').adLBBE]"
+			    },
+			    "RDPNAT" : {
+			      "value" : "[variables('RDPNAT')]"
+			    },
+			    "rdplbFEConfigID" : {
+			      "value" : "[variables('derivedIds').rdplbFEConfigID]"
+			    }
+        }
+      }
+    },
 		{
 			"name": "SettingUpSharepointWebPublicIP",
       "type": "Microsoft.Resources/deployments",
@@ -600,53 +627,12 @@
 		},
 		{
 			"apiVersion": "2015-05-01-preview",
-			"name": "[variables('lbSettings').rdpLBName]",
-			"type": "Microsoft.Network/loadBalancers",
-			"location": "[parameters('location')]",
-			"dependsOn": [
-				"[resourceId('Microsoft.Network/publicIPAddresses',variables('rdpIPAddressName'))]"
-			],
-			"properties": {
-				"frontendIPConfigurations": [
-					{
-						"name": "[variables('lbSettings').rdpLBFE]",
-						"properties": {
-							"publicIPAddress": {
-								"id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('rdpIPAddressName'))]"
-							}
-						}
-					}
-				],
-				"backendAddressPools": [
-					{
-						"name": "[variables('lbSettings').adLBBE]"
-
-					}
-				],
-				"inboundNatRules": [
-					{
-						"name": "[variables('RDPNAT')]",
-						"properties": {
-							"frontendIPConfiguration": {
-								"id": "[variables('derivedIds').rdplbFEConfigID]"
-							},
-							"protocol": "tcp",
-							"frontendPort": "[variables('vmSettings').rdpPort]",
-							"backendPort": 3389,
-							"enableFloatingIP": false
-						}
-					}
-				]
-			}
-		},
-		{
-			"apiVersion": "2015-05-01-preview",
 			"name": "[variables('lbSettings').spWebLBName]",
 			"type": "Microsoft.Network/loadBalancers",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"SettingUpSharepointWebPublicIP",
-				"[resourceId('Microsoft.Network/loadbalancers', variables('lbSettings').rdpLBName)]"
+				"Microsoft.Resources/deployments/SettingUpSharepointWebPublicIP",
+				"Microsoft.Resources/deployments/SettingUpRdp"
 			],
 			"properties": {
 				"frontendIPConfigurations": [
@@ -760,7 +746,7 @@
 			"type": "Microsoft.Network/loadBalancers",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"SettingUpSharepointCentralAdminPublicIP"
+				"Microsoft.Resources/deployments/SettingUpSharepointCentralAdminPublicIP"
 			],
 			"properties": {
 				"frontendIPConfigurations": [
@@ -801,7 +787,7 @@
 			"location": "[parameters('location')]",
 			"dependsOn": [
 				"[variables('virtualNetworkName')]",
-				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').rdpLBName)]"
+				"Microsoft.Resources/deployments/SettingUpRdp"
 			],
 			"apiVersion": "2015-05-01-preview",
 			"properties": {
@@ -834,7 +820,7 @@
 			"type": "Microsoft.Network/networkInterfaces",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"[concat('Microsoft.Network/loadBalancers/',variables('lbSettings').rdpLBName)]"
+				"Microsoft.Resources/deployments/SettingUpRdp"
 			],
 			"apiVersion": "2015-05-01-preview",
 			"properties": {
@@ -1001,7 +987,7 @@
 				"Microsoft.Resources/deployments/CreatingStorageAccounts",
 	      "[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]",
 	      "Microsoft.Resources/deployments/CreatingAvailabilitySets",
-	      "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').rdpLBName)]"
+	      "Microsoft.Resources/deployments/SettingUpRdp"
 			],
 			"properties" : {
 				"mode": "Incremental",
