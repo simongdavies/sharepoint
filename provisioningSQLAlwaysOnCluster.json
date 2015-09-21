@@ -120,7 +120,7 @@
       "properties": {
         "publisher": "Microsoft.Powershell",
         "type": "DSC",
-        "typeHandlerVersion": "2.5",
+        "typeHandlerVersion": "2.6",
         "autoUpgradeMinorVersion": true,
         "settings": {
           "modulesURL": "[parameters('fswModulesURL')]",
@@ -153,7 +153,7 @@
     "properties": {
       "publisher": "Microsoft.Powershell",
       "type": "DSC",
-      "typeHandlerVersion": "2.5",
+      "typeHandlerVersion": "2.6",
       "autoUpgradeMinorVersion": true,
       "settings": {
         "modulesURL": "[parameters('sqlAOPrepareModulesURL')]",
@@ -195,7 +195,7 @@
     "properties": {
       "publisher": "Microsoft.Powershell",
       "type": "DSC",
-      "typeHandlerVersion": "2.5",
+      "typeHandlerVersion": "2.6",
       "autoUpgradeMinorVersion": true,
       "settings": {
         "modulesURL": "[parameters('createClusterModulesURL')]",
