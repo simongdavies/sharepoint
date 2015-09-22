@@ -101,9 +101,11 @@
           }
         ]
       },
-      "bootDiagnostics": {
-        "enabled": "true",
-        "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'-diag.blob.core.windows.net')]"
+      "diagnosticsProfile": {
+        "bootDiagnostics": {
+          "enabled": "true",
+          "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'diag.blob.core.windows.net')]"
+        }
       }
     },
     "resources" :[

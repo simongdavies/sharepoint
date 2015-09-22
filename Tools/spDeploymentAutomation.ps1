@@ -5,15 +5,15 @@
 #######################################
 
 # Count of runs
-$count = 3
+$count = 2
 
 # Variables
-#$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"
-$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\azurecon\mainTemplate.json"
+$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"
+#$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\azurecon\mainTemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "japaneast"
-$rgprefix = "AC10"
+$rgprefix = "T68"
 $premium = $true
 
 # Generate parameter object
