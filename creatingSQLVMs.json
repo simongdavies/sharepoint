@@ -113,7 +113,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('sqlwVMName')]",
       "location": "[parameters('location')]",
@@ -163,11 +163,15 @@
               "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',parameters('sqlwNicName'))]"
             }
           ]
+        },
+        "bootDiagnostics": {
+          "enabled": "true",
+          "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'-diag.blob.core.windows.net')]"
         }
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('sqlVMName'), copyindex())]",
       "location": "[parameters('location')]",
@@ -231,6 +235,10 @@
               "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('sqlVMName'), copyindex(),'-nic'))]"
             }
           ]
+        },
+        "bootDiagnostics": {
+          "enabled": "true",
+          "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'-diag.blob.core.windows.net')]"
         }
       }
     }

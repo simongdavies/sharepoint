@@ -50,7 +50,7 @@
   },
   "resources": [
   {
-    "apiVersion": "2015-05-01-preview",
+    "apiVersion": "2015-06-15",
     "type": "Microsoft.Compute/virtualMachines",
     "name": "[parameters('adPDCVMName')]",
     "location": "[parameters('location')]",
@@ -100,6 +100,10 @@
             "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',parameters('adPDCNicName'))]"
           }
         ]
+      },
+      "bootDiagnostics": {
+        "enabled": "true",
+        "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'-diag.blob.core.windows.net')]"
       }
     },
     "resources" :[
