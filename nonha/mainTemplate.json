@@ -349,7 +349,7 @@
 		"spModulesURL": "[concat(variables('AssetLocation'),'/ConfigureSharePointServer.ps1.zip')]",
 		"spConfigurationFunction": "ConfigureSharePointServer.ps1\\ConfigureSharePointServer",
 		"spPublicIPLBSetupURL" : "[concat(parameters('baseUrl'),'/spvmpublicip-',parameters('spPublicIPNewOrExisting'),'.json')]",
-		"dscTemplateUri" : "[concat(parameters('baseUrl'),'/dscResource.json')]",
+		"provisioningSharepointUri" : "[concat(parameters('baseUrl'),'/provisioningSharepoint.json')]",
 		"storageAccountSetupURL" : "[concat(parameters('baseUrl'),'/storageAccount-',parameters('storageAccountNewOrExisting'),'.json')]",
 		"creatingPublicIPsUrl" : "[concat(parameters('baseUrl'),'/creatingPublicIPs.json')]"
 	},
@@ -488,7 +488,7 @@
 			"type": "Microsoft.Network/loadBalancers",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"[resourceId('Microsoft.Network/publicIPAddresses',variables('adpublicIPAddressName'))]"
+				"Microsoft.Resources/deployments/SettingUpPublicIPs"
 			],
 			"properties": {
 				"frontendIPConfigurations": [
@@ -496,7 +496,7 @@
 						"name": "[variables('LBFE')]",
 						"properties": {
 							"publicIPAddress": {
-								"id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('adpublicIPAddressName'))]"
+								"id" : "[reference('SettingUpPublicIPs').outputs.adPublicIpResourceId.value]"
 							}
 						}
 					}
@@ -528,7 +528,7 @@
 			"type": "Microsoft.Network/loadBalancers",
 			"location": "[parameters('location')]",
 			"dependsOn": [
-				"[resourceId('Microsoft.Network/publicIPAddresses',variables('sqlpublicIPAddressName'))]"
+				"Microsoft.Resources/deployments/SettingUpPublicIPs"
 			],
 			"properties": {
 				"frontendIPConfigurations": [
@@ -536,7 +536,7 @@
 						"name": "[variables('LBFE')]",
 						"properties": {
 							"publicIPAddress": {
-								"id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('sqlpublicIPAddressName'))]"
+								"id": "[reference('SettingUpPublicIPs').outputs.sqlPublicIpResourceId.value]"
 							}
 						}
 					}
@@ -636,7 +636,7 @@
 			"apiVersion": "2015-05-01-preview",
 			"dependsOn": [
 				"[parameters('virtualNetworkName')]",
-				"spPublicIPLBSetup"
+				"Microsoft.Resources/deployments/spPublicIPLBSetup"
 			],
 			"properties": {
 				"ipConfigurations": [
@@ -736,7 +736,7 @@
 					"properties": {
 						"publisher": "Microsoft.Powershell",
 						"type": "DSC",
-						"typeHandlerVersion": "1.7",
+						"typeHandlerVersion": "2.6",
 						"settings": {
 							"ModulesUrl": "[variables('adModulesURL')]",
 							"ConfigurationFunction": "[variables('adConfigurationFunction')]",
@@ -873,7 +873,7 @@
 			"properties": {
 				"publisher": "Microsoft.Powershell",
 				"type": "DSC",
-				"typeHandlerVersion": "1.7",
+				"typeHandlerVersion": "2.6",
 				"settings": {
 					"ModulesUrl": "[variables('sqlModulesURL')]",
 					"ConfigurationFunction": "[variables('sqlConfigurationFunction')]",
@@ -964,7 +964,7 @@
 				}
 			},
 		{
-				"name": "sharepointFarmSetup",
+				"name": "ProvisioningSharepointFarm",
 				"type": "Microsoft.Resources/deployments",
 				"apiVersion": "2015-01-01",
 				"dependsOn": [
@@ -974,7 +974,7 @@
 				"properties": {
 					"mode": "Incremental",
 					"templateLink": {
-						"uri": "[variables('dscTemplateUri')]",
+						"uri": "[variables('provisioningSharepointUri')]",
 						"contentVersion": "1.0.0.0"
 					},
 					"parameters": {

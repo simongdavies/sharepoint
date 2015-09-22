@@ -35,5 +35,18 @@
     }
   }
   ],
-  "outputs": {}
+  "outputs": {
+    "adPublicIpResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('adpublicIPAddressName'))]"
+    },
+    "sqlPublicIpResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('sqlpublicIPAddressName'))]"
+    },
+    "fqdn": {
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName')),providers('Microsoft.Network', 'publicIPAddresses').apiVersions[0]).dnsSettings.fqdn]",
+      "type": "string"
+    }
+  }
 }

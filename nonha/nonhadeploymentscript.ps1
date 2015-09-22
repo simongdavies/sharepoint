@@ -5,14 +5,14 @@
 #######################################
 
 # Count of runs
-$count = 2
+$count = 1
 
 # Variables
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\nonha\mainTemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\nonha\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"
-$rgprefix = "SPNONHA"
+$rgprefix = "NHA1"
 $premium = $true
 
 # Generate parameter object
