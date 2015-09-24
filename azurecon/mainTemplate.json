@@ -19,8 +19,7 @@
 			"type": "string",
 			"metadata": {
 				"description": "The name of the Administrator of the new VMs and Domain"
-			},
-			"defaultValue":"spAdministrator"
+			}
 		},
 		"adminPassword": {
 			"type": "securestring",
@@ -460,7 +459,7 @@
 			"provisioningBackupDCURL" : "[concat(parameters('baseUrl'),'/provisioningBackupDomainController.json')]",
 			"provisioningSQLAlwaysOnClusterUrl": "[concat(parameters('baseUrl'),'/provisioningSQLAlwaysOnCluster.json')]",
 			"creatingSharepointVMsURL": "[concat(parameters('baseUrl'),'/creatingSharepointVMs.json')]",
-			"provisioningSharepointUrl": "[concat(parameters('baseUrl'),'/provisioningSharepoint.json')]",
+			"provisioningSharepointUrl": "[concat(parameters('baseUrl'),'/provisioningSharePoint.json')]",
 			"creatingStorageAccounts" : "[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
 			"creatingSQLVMsURL": "[concat(parameters('baseUrl'),'/creatingSQLVMs.json')]",
 			"vnetSetupURL": "[concat(parameters('baseUrl'),'/vnet-new.json')]",
@@ -1488,6 +1487,9 @@
 					},
 					"configDatabaseName" : {
 					  "value" : "[variables('configDatabaseName')]"
+					},
+					"contentDatabaseName" : {
+					  "value" : "[variables('contentDatabaseName')]"
 					},
 					"sharepointCAfqdn" : {
 					  "value" : "[reference('SettingUpSharepointCentralAdminPublicIP').outputs.fqdn.value]"

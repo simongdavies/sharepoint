@@ -41,6 +41,9 @@
     "administrationContentDatabaseName" : {
       "type" : "string"
     },
+    "contentDatabaseName" : {
+      "type" : "string"
+    },
     "configDatabaseName" : {
       "type" : "string"
     },
