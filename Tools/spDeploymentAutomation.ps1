@@ -1,19 +1,21 @@
-﻿Switch-AzureMode -name AzureResourceManager
+﻿#Select-AzureSubscription -SubscriptionId 3be026c4-f6a8-4f4e-9e3d-3765bacefd70 -Current
+
+Switch-AzureMode -name AzureResourceManager
 
 #######################################
 ###         HA SHAREPOINT           ###
 #######################################
 
 # Count of runs
-$count = 2
+$count = 1
 
 # Variables
 $templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\mainTemplate.json"
 #$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\azurecon\mainTemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
-$location = "japaneast"
-$rgprefix = "T68"
+$location = "westus"
+$rgprefix = "SharePointFarm"
 $premium = $true
 
 # Generate parameter object
@@ -28,14 +30,14 @@ for($i = 0; $i -lt $count; $i++)
 {
     # Create new Resource Group
     $d = get-date
-    $rgname = $rgprefix + '-'+ $d.Year + $d.Month + $d.Day + '-' + $d.Hour + $d.Minute + $d.Second
+    $rgname = $rgprefix #+ '-'+ $d.Year + $d.Month + $d.Day + '-' + $d.Hour + $d.Minute + $d.Second
     New-AzureResourceGroup -Name $rgname -Location $location -Verbose 
     
     # Construct parameter set
     $dsuffix = "" + $d.hour + $d.minute + $d.Second
     $hash.dnsPrefix = "spha" + $dsuffix
     $hash.spCADNSPrefix = "spha" + $dsuffix + "ca"
-    $hash.storageAccountNamePrefix = "sa" + $dsuffix
+    $hash.storageAccountNamePrefix = "storage" + $dsuffix
     $hash.location = $location
 
     if ($premium)

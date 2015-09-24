@@ -14,7 +14,10 @@
     "spVMSize" : {
       "type" : "string"
     },
-    "availabilitySet" : {
+    "spWebAvailabilitySet" : {
+      "type" : "string"
+    },
+    "spAppAvailabilitySet" : {
       "type" : "string"
     },
     "adminUsername" : {
@@ -54,7 +57,7 @@
           "vmSize": "[parameters('spVMSize')]"
         },
         "availabilitySet": {
-          "id": "[parameters('availabilitySet')]"
+          "id": "[parameters('spAppAvailabiltySet')]"
         },
         "osProfile": {
           "computername": "[concat(parameters('spappVMName'), copyindex())]",
@@ -118,7 +121,7 @@
           "vmSize": "[parameters('spVMSize')]"
         },
         "availabilitySet": {
-          "id": "[parameters('availabilitySet')]"
+          "id": "[parameters('spWebAvailabilitySet')]"
         },
         "osProfile": {
           "computername": "[concat(parameters('spwebVMName'), copyindex())]",

@@ -8,7 +8,8 @@
 $count = 1
 
 # Variables
-$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\nonha\mainTemplate.json"
+#$templateFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\nonha\mainTemplate.json"
+$templateFile = "C:\daily\2015-9-22\mainTemplate.json"
 $paramsFile = "C:\Users\kenazk\Desktop\GitHub\sharepoint\nonha\parameters.json"
 $params = Get-content $paramsFile | convertfrom-json
 $location = "westus"

@@ -8,6 +8,9 @@
   "adminPassword": {
     "value" : "Admin123_!"
   },
+  "sharepointFarmName" : {
+    "value":"CoreyFarm"
+  },
   "sqlServerServiceAccountUserName":{
     "value": "sqlservice"
   },
@@ -67,5 +70,8 @@
   },
   "spVMSize" : {
     "value" : "Standard_D3"
+  },
+  "domainName":{
+    "value":"coreyfarm.local"
   }
 }

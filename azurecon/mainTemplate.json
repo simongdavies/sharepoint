@@ -1402,8 +1402,11 @@
 					"spVMSize" : {
 					  "value" : "[parameters('spVMSize')]"
 					},
-					"availabilitySet" : {
+					"spWebAvailabilitySet" : {
 					  "value" : "[reference('CreatingAvailabilitySets').outputs.spWebAvailabilitySetName.value]"
+					},
+					"spAppAvailabilitySet" : {
+					  "value" : "[reference('CreatingAvailabilitySets').outputs.spAppAvailabilitySetName.value]"
 					},
 					"adminUsername" : {
 					  "value" : "[parameters('adminUsername')]"
