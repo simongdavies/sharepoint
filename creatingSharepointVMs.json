@@ -57,7 +57,7 @@
           "vmSize": "[parameters('spVMSize')]"
         },
         "availabilitySet": {
-          "id": "[parameters('spAppAvailabiltySet')]"
+          "id": "[parameters('spAppAvailabilitySet')]"
         },
         "osProfile": {
           "computername": "[concat(parameters('spappVMName'), copyindex())]",
