@@ -9,7 +9,7 @@
     "value" : "Admin123_!"
   },
   "sharepointFarmName" : {
-    "value":"CoreyFarm"
+    "value":"spFarm"
   },
   "sqlServerServiceAccountUserName":{
     "value": "sqlservice"
@@ -39,13 +39,13 @@
     "value" : "new"
   },
   "dnsPrefix": {
-    "value" : "spha1747"
+    "value" : "sdha001"
   },
   "spCADNSPrefix": {
-    "value" : "sphaadmin1747"
+    "value" : "sdcaha001"
   },
   "storageAccountNamePrefix": {
-    "value": "spha1747"
+    "value": "sdha001"
   },
   "spCAIPAddressName" : {
     "value" : "spCAIP"
@@ -72,6 +72,9 @@
     "value" : "Standard_D3"
   },
   "domainName":{
-    "value":"coreyfarm.local"
-  }
+    "value":"spfarm.local"
+  },
+  "baseUrl" : {
+			"value": "https://raw.githubusercontent.com/simongdavies/sharepoint/master"
+	}
 }

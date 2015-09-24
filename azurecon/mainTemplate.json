@@ -467,7 +467,7 @@
 			"setupLBsUrl" : "[concat(parameters('baseUrl'),'/setupLBs.json')]",
 			"creatingNicsUrl" : "[concat(parameters('baseUrl'),'/creatingNICS.json')]"
 		},
-		"assetLocation": "https://github.com/kenazk/sharepoint/raw/master/dsc2.1"
+		"assetLocation":  "[concat(parameters('baseUrl'),'/dsc2.1')]"
 	},
 	"resources": [
 		{
